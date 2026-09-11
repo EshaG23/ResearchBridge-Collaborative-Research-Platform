@@ -1,0 +1,1 @@
+DEPARTMENT_NAMES = ['CSE', 'AIML', 'AIDS', 'BCA', 'MCA', 'EE', 'ECS', 'MECH', 'CIVIL', 'ROBOTICS']

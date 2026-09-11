@@ -1,5 +1,7 @@
 import re
 from django import forms
+from django.db.models import Q
+from .taxonomy import DEPARTMENT_NAMES
 from pypdf import PdfReader
 from .models import Profile, ResumeVersion, Department
 
@@ -9,7 +11,7 @@ class ProfileForm(forms.ModelForm):
                              help_text='PDF only, up to 5 MB. Each upload is preserved as a new version.')
     availability = forms.IntegerField(required=False, min_value=1, max_value=80, label='Availability (hours per week)')
     year = forms.TypedChoiceField(required=False, coerce=int, empty_value=None,
-        choices=[('', 'Choose your year')] + [(n, f'Year {n}') for n in range(1,7)], label='Current year of study')
+        choices=[('', 'Choose your year')] + [(n, f'Year {n}') for n in range(1,5)], label='Current year of study')
     class Meta:
         model = Profile
         fields = ['role','name','department','phone','skills','interests','availability','year','previous_research','scholar_url']
@@ -20,7 +22,7 @@ class ProfileForm(forms.ModelForm):
     def __init__(self, *args, draft=False, **kwargs):
         self.draft = draft
         super().__init__(*args, **kwargs)
-        self.fields['department'].queryset = Department.objects.filter(is_demo=self.instance.user.is_demo)
+        self.fields['department'].queryset = Department.objects.filter(Q(name__in=DEPARTMENT_NAMES) | Q(pk=self.instance.department_id))
         self.fields['role'].required = True
         if not self.instance.role:
             self.initial['role'] = 'student'

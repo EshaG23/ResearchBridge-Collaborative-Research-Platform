@@ -61,3 +61,8 @@ Executed checks: all 30 Django tests passed after final backend corrections. Cov
 Browser: rejected personal email, displayed OTP countdown/resend cooldown, verified designated teacher OTP, showed mandatory onboarding, hid student fields after teacher selection, saved a teacher profile without granting approval, logged out, reverified OTP, and returned to the saved account dashboard. Initial profile screen included an unwanted blank role option; replaced generated choices with exactly Student/Teacher. Profile screenshots reviewed. Demo teacher record intentionally remains in the local demo database; no real data was created.
 
 Modules 5–20 remain pending. Full product scope unchanged. See authentication-and-profiles.md for demo identities, data paths, limits and remaining external setup.
+
+
+## Profile options update
+
+Year choices are now 1–4. The project owner supplied CSE, AIML, AIDS, BCA, MCA, EE, ECS, MECH, CIVIL, ROBOTICS. A data migration adds these exact labels for fresh and existing databases. Existing profile department references remain intact and appear on that profile until changed; new profiles use the supplied list. Earlier demo-department/year defaults are superseded.

@@ -18,7 +18,7 @@ class ProfileWorkflowTests(TestCase):
         self.addCleanup(self.override.disable)
         self.user = User.objects.create_user('demo.student@rbunagpur.in', is_demo=True)
         self.client.force_login(self.user)
-        self.department = Department.objects.create(name='Demo Computing',is_demo=True)
+        self.department = Department.objects.get(name='CSE')
         self.skill = Skill.objects.create(name='Python')
         self.interest = ResearchInterest.objects.create(name='AI')
         self.data = {'role':'student','name':'Demo Student','phone':'9876543210','department':self.department.pk,

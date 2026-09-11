@@ -10,13 +10,13 @@ Logout is POST-only and ends the session without deleting saved records. A retur
 
 ## Profile completion
 
-Required for both roles: name, department, phone (10–15 digits), skills and research interests. Students also need weekly availability (1–80 hours), year (1–6), and a readable unencrypted PDF résumé (up to 5 MB, 1–50 pages). These limits are configurable implementation choices in the form and can be revised. Teacher previous work and Google Scholar links are optional. No teacher résumé or student-year fields are required for teachers.
+Required for both roles: name, department, phone (10–15 digits), skills and research interests. Students also need weekly availability (1–80 hours), year (1–4), and a readable unencrypted PDF résumé (up to 5 MB, 1–50 pages). These limits are configurable implementation choices in the form and can be revised. Teacher previous work and Google Scholar links are optional. No teacher résumé or student-year fields are required for teachers.
 
 Use Save draft during onboarding to retain incomplete details. Complete profile validates the full role-specific requirements. After completion, account email and role cannot be changed through profile editing; role correction needs explicit administrative handling. This is a reversible permission default, not a claim of a final college policy.
 
 Selecting Teacher does not grant mentor permissions. An administrator can approve a teacher claim in Django admin > Profiles after the institution's verification procedure. The `is_verified_teacher` property is the permission predicate for upcoming mentor operations. A completed pending teacher profile can reach the account dashboard but has no mentor operations yet.
 
-Demo department fixtures are visibly labelled and separate from real department choices. Run `manage.py seed_demo_taxonomy` explicitly in local demo mode; it is idempotent and creates no users. Real department names remain pending an official list. Skills/interests use shared controlled tables for later matching.
+Demo department fixtures are visibly labelled and separate from real department choices. Run `manage.py seed_demo_taxonomy` explicitly in local demo mode; it is idempotent and creates no users. The project owner has supplied the current department options; see the latest status entry. Skills/interests use shared controlled tables for later matching.
 
 Each résumé upload creates a new immutable file record; previous versions stay downloadable by their owner. Changing a profile résumé cannot overwrite a stored earlier file. Future applications must reference these version records with protected foreign keys. Owner-only download routes currently serve files as attachments; broader reviewer permissions belong to later modules. Upload/database failures show an error and remove a newly stored orphan file. Malware scanning and deployment request-body caps are not claimed by PDF-format validation.
 
