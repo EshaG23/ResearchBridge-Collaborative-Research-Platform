@@ -2,7 +2,7 @@
 
 College research collaboration for registered `rbunagpur.in` and `rknec.in` users. This is a student project, not a claim of official university endorsement.
 
-Modules 1–4 provide the foundation, shared UI, roster-based password authentication, and persisted role-specific profiles. The ten-part product specification remains the source of truth; coding modules do not replace its numbering. Real SMTP delivery still needs private setup and testing. Modules 5–7 add shared access policies, private PDF documents and versions, persistent in-app notifications, and student/faculty idea creation. See [modules 5–7 guide](docs/modules-5-7.md). Mentor matching, applications and community workflows remain for later modules.
+Modules 1–4 provide the foundation, shared UI, roster-based password authentication, and persisted role-specific profiles. The ten-part product specification remains the source of truth; coding modules do not replace its numbering. Real SMTP delivery still needs private setup and testing. Modules 5–7 add shared access policies, private PDF documents and versions, persistent in-app notifications, and student/faculty idea creation. See [modules 5–7 guide](docs/modules-5-7.md). Module 8 adds mentor matching, sequential requests and faculty decisions; see [the mentor guide](docs/module-8.md). Applications and community workflows remain for later modules.
 
 ## Demo accounts
 

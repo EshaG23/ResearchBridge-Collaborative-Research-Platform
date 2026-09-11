@@ -47,3 +47,5 @@
 @media(max-width:760px) {.idea-card-grid {grid-template-columns:1fr}.notification-row {flex-wrap:wrap;padding:18px}.notification-row form {margin-left:26px}.section-heading {flex-wrap:wrap;gap:16px}.notification-link {margin-right:10px}.notification-label {display:none}.document-upload,.private-notes {padding:20px}.view-tabs a {padding:8px 12px}.idea-form .button-row {flex-wrap:wrap}.page-hero .button-row {flex-wrap:wrap}.resume-list li {flex-wrap:wrap}.resume-list a {overflow-wrap:anywhere}}
 
 .page-hero .button-row {align-items:center}
+
+.mentor-card-body {padding:20px 22px;flex:1}.mentor-card-body h3 {font-size:14px;margin:14px 0 8px}.mentor-card-body .saved-tags {padding:0}.mentor-card-body ul {padding-left:18px;color:#50665c;font-size:13px}.mentor-decision {padding:28px;margin-top:24px}.mentor-decision p {margin:12px 0 20px}.mentor-decision .button-row {flex-wrap:wrap}

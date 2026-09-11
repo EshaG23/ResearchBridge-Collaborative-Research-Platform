@@ -24,7 +24,12 @@ def can_view_confidential(user, project):
     return can_manage_project(user, project)
 
 def can_view_project(user, project):
-    return college_member(user) and (project.status in ('recruiting', 'closed') or can_manage_project(user, project))
+    if not college_member(user):
+        return False
+    if project.status in ('recruiting', 'closed') or can_manage_project(user, project):
+        return True
+    from apps.mentorship.models import MentorRequest
+    return approved_teacher(user) and MentorRequest.objects.filter(search__project=project,search__state='pending',teacher=user,state='pending').exists()
 
 def can_view_resume(user, resume):
     # Future application reviewers must use an application-scoped, snapshot download.

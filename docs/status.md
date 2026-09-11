@@ -97,3 +97,10 @@ Module 7: student and approved-faculty idea creation, shared skill/domain/depart
 Validation: all 55 tests passed; after final access-revocation and save-error handling adjustments, all 23 affected project/core tests passed again. Migrations applied and no missing migrations detected. Tests cover private data/file denial, cross-project URLs, immutable versions, storage failure rollback, role escalation, stale edits, atomic idea/notification rollback, retries, CSRF, notification persistence across login/logout, authorised links and cache headers.
 
 Browser: created a labelled fictional student idea, checked its recruitment and confidential pages, opened its notification and observed unread count change from 1 to 0. Desktop private-space screenshot and 390px idea form reviewed, with no horizontal overflow. The demo idea remains in the local demo database. Mentor matching, applications, NDA and community workflows are still later modules; no automatic mentor acceptance or community access has been invented.
+
+
+## Module 8 — completed
+
+Implemented deterministic mentor ranking with explanations, chosen-first saved priority queues, one pending request, sequential rejection forwarding, acceptance/mentor attachment and recruitment publication. Added student request status, faculty inbox/review, private access boundaries, idempotent transactional decisions and in-app events. Stale reviews require reloading. Ineligible queued teachers are skipped; empty/exhausted/pending states remain truthful.
+
+All 68 regression tests passed, including 13 new mentorship tests. Migrations applied; Django checks and missing-migration checks passed. Browser verified recommendations on an existing student idea and phone-width overflow check. User-created project content was preserved and no mentor request was sent during browser verification. See module-8.md for matching rules and how to test both roles. Modules 9–20 remain pending.

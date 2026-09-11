@@ -21,7 +21,7 @@ Django, templates, CSS, JavaScript, SQLite, persistent private storage, in-app n
 ## Unresolved institutional/product details
 
 1. Exact teacher verification process and final department list.
-2. Mentor matching weights and tie-breaking.
+2. Mentor matching defaults now implemented: 50 domain, 20 department, up to 30 skill coverage; ties by name then user ID. These remain configurable implementation choices.
 3. Achievement time range and approval authority.
 4. Selection-letter wording and format.
 5. College-authorised NDA wording and letterhead.

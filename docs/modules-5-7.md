@@ -33,4 +33,4 @@ Recruitment records never contain confidential text. Notification messages conta
 
 ## Remaining workflow dependencies
 
-Student mentor matching and acceptance come next. Discovery filtering, applications, letters, NDA, community membership, tasks and IP are separate later modules. There is no applicant/community membership bypass. The database-backed notification infrastructure is ready for those events. Real password-reset SMTP delivery still needs private setup and an actual delivery test.
+Student mentor matching and acceptance are now implemented in Module 8; see module-8.md. Discovery filtering, applications, letters, NDA, community membership, tasks and IP are separate later modules. There is no applicant/community membership bypass. The database-backed notification infrastructure is ready for those events. Real password-reset SMTP delivery still needs private setup and an actual delivery test.
