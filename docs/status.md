@@ -104,3 +104,10 @@ Browser: created a labelled fictional student idea, checked its recruitment and 
 Implemented deterministic mentor ranking with explanations, chosen-first saved priority queues, one pending request, sequential rejection forwarding, acceptance/mentor attachment and recruitment publication. Added student request status, faculty inbox/review, private access boundaries, idempotent transactional decisions and in-app events. Stale reviews require reloading. Ineligible queued teachers are skipped; empty/exhausted/pending states remain truthful.
 
 All 68 regression tests passed, including 13 new mentorship tests. Migrations applied; Django checks and missing-migration checks passed. Browser verified recommendations on an existing student idea and phone-width overflow check. User-created project content was preserved and no mentor request was sent during browser verification. See module-8.md for matching rules and how to test both roles. Modules 9–20 remain pending.
+
+
+## Module 9 — completed
+
+Implemented authenticated project discovery on Dashboard and a dedicated sidebar page, recruitment-only search, department/domain/skill filters, four sorting choices, stable pagination, clear-filter controls and contextual empty/error states. Cards include mentor/proposer identity and retain three/two/one responsive columns. Unpublished/closed records and confidential contents are excluded.
+
+Validation: all 44 affected project/mentorship/core tests passed, including 8 new discovery tests. No migration changes detected. Browser checked real records and CSE filtering from two results to one; desktop grid measured at three columns. Existing project records preserved. Application workflows begin in Module 10.

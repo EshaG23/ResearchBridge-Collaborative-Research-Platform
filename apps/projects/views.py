@@ -68,3 +68,13 @@ def private(request, pk):
     return render(request,'projects/private.html',{'page_title':'Confidential idea','project':project,
         'details':project.confidential.details, 'documents':project.documents.prefetch_related('versions__uploader').all()})
 
+
+
+@login_required
+@never_cache
+@require_GET
+def discover(request):
+    from .discovery import discovery_context
+    require_permission(college_member(request.user), conceal=False)
+    return render(request, 'projects/discover.html', discovery_context(request) | {
+        'page_title': 'Discover projects', 'can_create': can_create_idea(request.user)})

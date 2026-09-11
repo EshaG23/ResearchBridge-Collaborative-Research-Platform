@@ -1,0 +1,4 @@
+{% extends 'layouts/member.html' %}{% block member_content %}
+<section class="page-hero mint-hero"><div><p class="eyebrow">CURIOSITY HAS NO DEPARTMENT</p><h1>Find a question that moves you.</h1><p>Explore research opportunities across campus.<br>Bring your skills. Discover a new perspective.</p>{% if can_create %}<a class="button button-dark" href="{% url 'projects:create' %}">Create an idea {% include 'components/icon.html' with name='arrow' %}</a>{% endif %}</div><div class="hero-symbol" aria-hidden="true">{% include 'components/icon.html' with name='grid' %}</div><span class="hero-stamp">DISCOVER / RESEARCH</span></section>
+{% include 'projects/discovery_results.html' %}
+{% endblock %}
