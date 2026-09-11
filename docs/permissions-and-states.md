@@ -1,6 +1,6 @@
 # Intended permissions and state transitions
 
-This document records the target rules. Apart from foundation routing and account/admin behaviour, enforcement will be implemented in subsequent modules.
+This document records the overall target rules. Modules 1–7 now enforce roster authentication, onboarding, current project access, private files and recipient-scoped notifications. See modules-5-7.md for the implemented permission matrix. Applicant, NDA and community permissions remain for their later modules.
 
 | Actor | Intended access |
 |---|---|
@@ -20,7 +20,7 @@ Check permissions server-side for pages, writes, downloads, polling, search, not
 
 ## Target transitions
 
-- Authentication: eligible email → challenge → successful verification → account creation/activation → mandatory profile → dashboard. Demo identities remain explicitly separate and unverified.
+- Authentication: roster-provisioned email and password → mandatory profile → dashboard. Forgot Password uses a bound OTP and password reset; it never creates an account. Demo identities remain explicitly separate and unverified.
 - Mentorship: chosen teacher receives one active request → acceptance attaches mentor; rejection advances once to the next ranked candidate. Pending/no candidates must be truthful states. Nonresponse escalation and all-rejected recovery remain future scope.
 - Recruitment: applied → shortlisted → selected/not selected. Optional meeting invitations are separate records. Selection → letter issued → agreement pending/completed. No offer accept/decline stage.
 - Community: all intended student agreements valid → mentor manually creates once → eligible students and mentor added → mentor appoints student leader. No silent roster removal or automatic creation upon signing.

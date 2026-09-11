@@ -56,3 +56,9 @@ class ResumeVersion(models.Model):
     original_name = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     # Future application snapshots reference these immutable records with PROTECT.
+
+    def save(self, *args, **kwargs):
+        if not self._state.adding:
+            from django.core.exceptions import ValidationError
+            raise ValidationError('Resume versions are immutable. Upload a new version.')
+        return super().save(*args, **kwargs)

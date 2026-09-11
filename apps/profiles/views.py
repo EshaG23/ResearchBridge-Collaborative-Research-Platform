@@ -2,7 +2,6 @@ from pathlib import Path
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.http import FileResponse, Http404
 from django.shortcuts import render, redirect, get_object_or_404
 from django.utils import timezone
 from django.views.decorators.cache import never_cache
@@ -45,10 +44,8 @@ def edit(request):
 @never_cache
 @require_GET
 def resume_download(request, pk):
-    resume = get_object_or_404(ResumeVersion, pk=pk, profile__user=request.user)
-    try:
-        response = FileResponse(resume.file.open('rb'), as_attachment=True, filename=resume.original_name, content_type='application/pdf')
-    except FileNotFoundError:
-        raise Http404('File unavailable')
-    response['X-Content-Type-Options'] = 'nosniff'
-    return response
+    from apps.core.permissions import can_view_resume, require_permission
+    from apps.documents.security import private_download
+    resume = get_object_or_404(ResumeVersion.objects.select_related('profile'), pk=pk)
+    require_permission(can_view_resume(request.user, resume))
+    return private_download(resume.file, resume.original_name)

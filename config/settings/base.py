@@ -31,6 +31,7 @@ TEMPLATES = [{
         "django.template.context_processors.request",
         "django.contrib.auth.context_processors.auth",
         "django.contrib.messages.context_processors.messages",
+        "apps.notifications.context_processors.notification_count",
     ]},
 }]
 WSGI_APPLICATION = "config.wsgi.application"
@@ -56,7 +57,7 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 MEDIA_ROOT = DATA_DIR / "uploads"
-# Intentionally no public media URL route. Authorised downloads come in Module 5.
+# Private uploads are available only through permission-checked download views.
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "accounts:login"
 SESSION_COOKIE_HTTPONLY = True
@@ -64,7 +65,7 @@ SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 X_FRAME_OPTIONS = "DENY"
 SECURE_CONTENT_TYPE_NOSNIFF = True
-# No OTP implementation is active yet. Never log OTPs with a console email backend.
+# Never log password-reset OTPs with a console email backend.
 EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
 AUTHENTICATION_MODE = os.environ.get('RESEARCHBRIDGE_AUTH_MODE', 'disabled')
 EMAIL_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')

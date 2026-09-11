@@ -2,8 +2,7 @@ import re
 from django import forms
 from django.db.models import Q
 from .taxonomy import DEPARTMENT_NAMES
-from pypdf import PdfReader
-from .models import Profile, ResumeVersion, Department
+from .models import Profile, Department
 
 class ProfileForm(forms.ModelForm):
     role = forms.ChoiceField(choices=[('student', 'Student'), ('teacher', 'Teacher')], widget=forms.RadioSelect)
@@ -55,20 +54,8 @@ class ProfileForm(forms.ModelForm):
         upload = self.cleaned_data.get('resume')
         if not upload:
             return None
-        if not upload.name.lower().endswith('.pdf') or upload.size > 5*1024*1024:
-            raise forms.ValidationError('Upload a PDF no larger than 5 MB.')
-        try:
-            if upload.read(5) != b'%PDF-':
-                raise ValueError
-            upload.seek(0)
-            reader = PdfReader(upload, strict=True)
-            if reader.is_encrypted or not len(reader.pages) or len(reader.pages) > 50:
-                raise ValueError
-        except Exception:
-            raise forms.ValidationError('Upload a readable, unencrypted PDF with 1–50 pages.') from None
-        finally:
-            upload.seek(0)
-        return upload
+        from apps.documents.security import validate_private_pdf
+        return validate_private_pdf(upload)
 
     def clean(self):
         data = super().clean()

@@ -1,0 +1,49 @@
+.idea-card-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px;margin:24px 0}
+.idea-card {background:white;border:1px solid #dce6e1;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;min-width:0;box-shadow:0 8px 24px #192e2610}
+.idea-card-top {background:#e3f1ff;padding:20px;display:flex;gap:12px;justify-content:space-between;align-items:center}
+.idea-card:nth-child(3n + 2) .idea-card-top {background:#eee5fb}
+.idea-card:nth-child(3n) .idea-card-top {background:#ffedda}
+.idea-card h2 {padding:22px 22px 12px;font-size:20px;overflow-wrap:anywhere}
+.idea-card h2 a {color:#203d34}
+.idea-card>p {padding:0 22px;overflow-wrap:anywhere}
+.idea-card .saved-tags {padding:20px 22px;flex:1}
+.idea-card-footer {border-top:1px solid #e5ece8;padding:17px 22px;display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;font-size:12px}
+.empty-projects {grid-column:1/-1;text-align:center;padding:50px 25px;display:flex;align-items:center;flex-direction:column;gap:18px}
+.view-tabs {display:flex;gap:6px;flex-wrap:wrap;background:#e7ede9;padding:5px;border-radius:12px}
+.view-tabs a {padding:10px 18px;border-radius:9px;color:#405950;font-weight:600}
+.view-tabs a[aria-current] {background:white;color:#143a2b;box-shadow:0 2px 8px #1e352516}
+.idea-form .field {margin-bottom:22px}
+.idea-form .choice-grid>div>div {display:flex;flex-wrap:wrap;gap:9px}
+.idea-form .choice-grid label:has(input) {display:flex;align-items:center;gap:8px;border:1px solid #d7e3db;border-radius:9px;padding:9px 12px;background:#f9fbfa}
+.idea-form input[type=checkbox] {width:16px;height:16px;accent-color:#237450}
+.idea-form .choice-grid label:has(input:checked) {background:#e5f3e9;border-color:#72a98a}
+.choice-grid {display:grid;gap:26px}
+.confidential-section {border-color:#dbcae9;background:#fcfaff}
+.private-hero {background:#ece4f6;color:#342341}
+.project-information h3 {margin:25px 0 12px;font-size:14px}
+.project-information {padding:28px}
+.private-notes {padding:28px;margin-bottom:28px}
+.preserve-lines {white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.9}
+.document-library {display:grid;gap:18px;margin-top:20px}
+.document-record {padding:24px;min-width:0}
+.document-upload {padding:30px;max-width:850px}
+.document-upload .field {margin-bottom:25px}
+.page-hero h1,.page-hero p {overflow-wrap:anywhere}
+.page-hero>div {min-width:0}
+.page-hero .button-row {margin-top:20px}
+.notification-link {display:flex;align-items:center;gap:8px;color:#253d33;margin-left:auto;margin-right:20px}
+.notification-link [data-unread-count] {background:#215d43;color:white;border-radius:20px;min-width:23px;padding:1px 7px;text-align:center;font-size:12px}
+.notification-list {display:grid;gap:12px;margin-top:24px}
+.notification-row {display:flex;gap:18px;align-items:center;padding:25px;border:1px solid #dde6df;border-radius:14px;background:white}
+.notification-row.is-unread {background:#f1f8f2;border-left:4px solid #488866}
+.notification-row>div {flex:1;min-width:0;overflow-wrap:anywhere}
+.notification-row h2 {font-size:16px;margin-bottom:7px}
+.notification-row small {color:#617669}
+.notification-dot {width:8px;height:8px;border-radius:50%;background:#c1cec5;flex-shrink:0}
+.is-unread .notification-dot {background:#357c54}
+.notification-refresh {padding:15px;background:#fff0d9;border-radius:10px;margin-top:20px}
+.pagination {display:flex;gap:18px;justify-content:center;align-items:center;margin:28px 0}
+@media(max-width:1100px) {.idea-card-grid {grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px) {.idea-card-grid {grid-template-columns:1fr}.notification-row {flex-wrap:wrap;padding:18px}.notification-row form {margin-left:26px}.section-heading {flex-wrap:wrap;gap:16px}.notification-link {margin-right:10px}.notification-label {display:none}.document-upload,.private-notes {padding:20px}.view-tabs a {padding:8px 12px}.idea-form .button-row {flex-wrap:wrap}.page-hero .button-row {flex-wrap:wrap}.resume-list li {flex-wrap:wrap}.resume-list a {overflow-wrap:anywhere}}
+
+.page-hero .button-row {align-items:center}

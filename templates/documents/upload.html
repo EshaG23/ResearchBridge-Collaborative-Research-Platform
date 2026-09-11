@@ -1,0 +1,4 @@
+{% extends 'layouts/member.html' %}{% block member_content %}
+<section class="page-hero private-hero"><div><p class="eyebrow">PRIVATE DOCUMENT LIBRARY</p><h1>{% if document %}A new version. A preserved history.{% else %}Give your idea some context.{% endif %}</h1><p>{{ project.title }} · Accessible only to the proposer and attached approved mentor.</p></div></section>
+<form method="post" enctype="multipart/form-data" class="panel document-upload">{% csrf_token %}{% if form.errors %}<div class="notice notice-error" role="alert">{{ form.non_field_errors }}Please check the fields below.</div>{% endif %}{% include 'components/field.html' with field=form.title %}{% include 'components/field.html' with field=form.file %}<div class="form-actions"><a href="{% url 'projects:private' project.pk %}">Back to documents</a><button class="button button-primary">Save private {% if document %}version{% else %}document{% endif %}</button></div></form>
+{% endblock %}

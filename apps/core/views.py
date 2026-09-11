@@ -20,4 +20,11 @@ from django.views.decorators.cache import never_cache
 @never_cache
 @require_GET
 def dashboard(request):
-    return render(request, 'core/dashboard.html', {'page_title': 'Your workspace', 'profile': request.user.profile})
+    from apps.projects.models import Project
+    from apps.core.permissions import can_create_idea, college_member, require_permission
+    from django.core.paginator import Paginator
+    require_permission(college_member(request.user), conceal=False)
+    projects = Project.objects.filter(status=Project.Status.RECRUITING).select_related('domain').prefetch_related('departments','skills')
+    page = Paginator(projects,12).get_page(request.GET.get('page'))
+    return render(request, 'core/dashboard.html', {'page_title': 'Your workspace', 'profile': request.user.profile,
+        'recruiting_projects': page, 'page': page, 'can_create': can_create_idea(request.user)})
