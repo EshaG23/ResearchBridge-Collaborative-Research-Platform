@@ -1,4 +1,6 @@
-from django.test import TestCase
+from django.test import TestCase, RequestFactory, override_settings
+from django.http import Http404
+from .views import ui_preview
 
 class FoundationRoutingTests(TestCase):
     def test_entry_routes_to_sign_in(self):
@@ -14,3 +16,13 @@ class FoundationRoutingTests(TestCase):
 
     def test_admin_requires_authentication(self):
         self.assertEqual(self.client.get("/admin/").status_code, 302)
+
+class PreviewBoundaryTests(TestCase):
+    @override_settings(DEBUG=False)
+    def test_preview_cannot_render_in_production(self):
+        with self.assertRaises(Http404):
+            ui_preview(RequestFactory().get('/dev/ui/'))
+
+    @override_settings(DEBUG=True)
+    def test_preview_rejects_writes(self):
+        self.assertEqual(ui_preview(RequestFactory().post('/dev/ui/')).status_code, 405)

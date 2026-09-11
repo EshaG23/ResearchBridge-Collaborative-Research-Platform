@@ -7,3 +7,12 @@ urlpatterns = [
     path("accounts/", include("apps.accounts.urls")),
     path("admin/", admin.site.urls),
 ]
+
+from django.conf import settings
+from apps.core.views import ui_preview
+
+if settings.DEBUG:
+    urlpatterns += [
+        path("dev/ui/", ui_preview, name="ui-preview"),
+        path("dev/ui/<str:section>/", ui_preview, name="ui-preview-section"),
+    ]
