@@ -49,3 +49,22 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+
+import uuid
+
+class OTPChallenge(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    email = models.EmailField(db_index=True)
+    binding = models.CharField(max_length=64)
+    code_digest = models.CharField(max_length=64)
+    mode = models.CharField(max_length=8)
+    created_at = models.DateTimeField(default=timezone.now)
+    expires_at = models.DateTimeField()
+    attempts = models.PositiveSmallIntegerField(default=0)
+    consumed = models.BooleanField(default=False)
+
+class AuthThrottle(models.Model):
+    key = models.CharField(max_length=64, primary_key=True)
+    started_at = models.DateTimeField(default=timezone.now)
+    count = models.PositiveIntegerField(default=0)

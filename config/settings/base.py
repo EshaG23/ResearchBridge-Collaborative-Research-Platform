@@ -20,6 +20,7 @@ MIDDLEWARE = [
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
+    "apps.profiles.middleware.ProfileGateMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 ROOT_URLCONF = "config.urls"
@@ -65,4 +66,17 @@ X_FRAME_OPTIONS = "DENY"
 SECURE_CONTENT_TYPE_NOSNIFF = True
 # No OTP implementation is active yet. Never log OTPs with a console email backend.
 EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
-AUTHENTICATION_MODE = "disabled"
+AUTHENTICATION_MODE = os.environ.get('RESEARCHBRIDGE_AUTH_MODE', 'disabled')
+DEMO_IDENTITIES = ['demo.student@rbunagpur.in', 'demo.applicant@rbunagpur.in', 'demo.teacher@rbunagpur.in']
+EMAIL_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
+EMAIL_PORT = int(os.environ.get('SMTP_PORT', '587'))
+EMAIL_HOST_USER = os.environ.get('SMTP_USER', '')
+EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
+EMAIL_USE_TLS = True
+EMAIL_TIMEOUT = 15
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+if AUTHENTICATION_MODE == 'real':
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+FILE_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
+DATA_UPLOAD_MAX_MEMORY_SIZE = 6 * 1024 * 1024
+

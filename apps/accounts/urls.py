@@ -1,5 +1,5 @@
 from django.urls import path
-from django.views.generic import TemplateView
-
-app_name = "accounts"
-urlpatterns = [path("login/", TemplateView.as_view(template_name="accounts/login.html"), name="login")]
+from . import views
+app_name = 'accounts'
+urlpatterns = [path('login/', views.sign_in, name='login'), path('verify/', views.verify, name='verify'),
+               path('resend/', views.resend, name='resend'), path('logout/', views.sign_out, name='logout')]

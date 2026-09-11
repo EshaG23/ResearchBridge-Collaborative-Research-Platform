@@ -50,3 +50,14 @@ Redesigned the entrance as a framed two-panel layout with a research-journey sid
 Discovery now contains three explicitly labelled illustrative topic cards so the intended recruitment design can be reviewed. These are template-only design samples, not published records or achievements. No data, permission rules, or authentication behaviour changed.
 
 Validation: all 12 existing Django tests passed from the project directory. An initial test invocation from the parent directory discovered zero tests and was rerun correctly. Desktop entrance and three-column discovery screenshots inspected; 390px mobile sign-in and discovery checked for horizontal overflow. Fixed heading whitespace at the phone breakpoint and text encoding in preview templates. No real workflows or new module implementation claimed.
+
+
+## Modules 3 and 4 — local demo complete; external email integration pending
+
+Implemented: eligible-email request form; bound/expiring/single-use OTP; request limits and resend timer; verification; POST logout; separated demo database; mandatory profile gate; editable student/teacher profiles; resumable drafts; shared controlled taxonomy; private immutable résumé uploads/downloads; administrative teacher approval field; basic authenticated workspace. Real OTP/SMTP code exists, but actual inbox delivery is unverified and requires private credentials plus an approved test.
+
+Executed checks: all 30 Django tests passed after final backend corrections. Coverage includes email restriction, no pre-verification account creation, demo allowlist and real-account protection, expiry/replay/wrong-session rejection, five-attempt lockout, resend invalidation and rate limits, CSRF, POST logout, real-code path through in-memory email, failed-send invalidation, mandatory onboarding, draft persistence, protected roles, optional teacher fields, owner-only résumé downloads, PDF/phone/availability/Scholar validation, résumé version preservation, upload failure rollback, and logout followed by actual OTP re-login preserving student data. Migrations applied to the isolated demo database; no missing migrations or dependency conflicts.
+
+Browser: rejected personal email, displayed OTP countdown/resend cooldown, verified designated teacher OTP, showed mandatory onboarding, hid student fields after teacher selection, saved a teacher profile without granting approval, logged out, reverified OTP, and returned to the saved account dashboard. Initial profile screen included an unwanted blank role option; replaced generated choices with exactly Student/Teacher. Profile screenshots reviewed. Demo teacher record intentionally remains in the local demo database; no real data was created.
+
+Modules 5–20 remain pending. Full product scope unchanged. See authentication-and-profiles.md for demo identities, data paths, limits and remaining external setup.

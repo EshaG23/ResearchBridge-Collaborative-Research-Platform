@@ -26,15 +26,20 @@
   <main id="main" class="auth-main">
     <div class="auth-topline"><span class="label-chip">COLLEGE ACCESS</span><span>For students &amp; teachers</span></div>
     <section class="auth-form" aria-labelledby="signin-title">
+    {% block authentication %}
       <div class="entry-icon">{% include 'components/icon.html' with name='book' %}</div>
-      <p class="eyebrow">YOUR RESEARCH WORKSPACE</p>
       <h2 id="signin-title">Welcome aboard.</h2>
-      <p class="intro-copy">One college. Many possibilities.<br>Sign in with your college email to get started.</p>
+      <p class="intro-copy">Sign in with your college email to get started.</p>
       {% include 'components/messages.html' %}
-      <div class="field"><label for="college-email">College email address</label><div class="email-control"><span aria-hidden="true">@</span><input id="college-email" type="email" placeholder="yourname@rbunagpur.in" autocomplete="email" disabled aria-describedby="email-help"></div><p class="field-help" id="email-help">Use your official <strong>@rbunagpur.in</strong> email address.</p></div>
-      <button class="button button-primary full-width" disabled aria-describedby="signin-status">Continue with email {% include 'components/icon.html' with name='arrow' %}</button>
-      <p class="availability" id="signin-status">Sign-in will be available in an upcoming build.</p>
+      {% if demo %}<div class="notice"><strong>Local demonstration</strong><p>No email is sent. Use code <strong>123456</strong> with one of these designated identities:</p><ul class="demo-identities">{% for email in demo_identities %}<li>{{ email }}</li>{% endfor %}</ul></div>{% endif %}
+      <form method="post" data-login-form>{% csrf_token %}
+        {% if form.non_field_errors %}<div class="notice notice-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
+        {% include 'components/field.html' with field=form.email %}
+        <p class="field-error" data-email-feedback aria-live="polite"></p>
+        <button class="button button-primary full-width" type="submit" data-email-submit>Continue with email {% include 'components/icon.html' with name='arrow' %}</button>
+      </form>
       <div class="auth-reassurance">{% include 'components/icon.html' with name='shield' %}<div><strong>Built around confidentiality</strong><p>Full research details stay within authorised project communities.</p></div></div>
+    {% endblock %}
     </section>
     <div class="auth-bottom-note"><span>DISCOVER</span><i></i><span>COLLABORATE</span><i></i><span>CONTRIBUTE</span></div>
   </main>

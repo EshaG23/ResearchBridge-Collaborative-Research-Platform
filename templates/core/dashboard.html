@@ -1,0 +1,4 @@
+{% extends 'layouts/member.html' %}{% block member_content %}
+<div class="page-heading"><div><p class="eyebrow">YOUR RESEARCH WORKSPACE</p><h1>Welcome, {{ profile.name }}.</h1><p>Your profile is complete and saved. You can return to this workspace after signing out.</p></div><a class="button button-secondary" href="{% url 'profiles:edit' %}">Edit profile</a></div>
+<section class="panel component-panel"><h2>Ready to connect.</h2><div class="button-row"><span class="badge badge-blue">{{ profile.get_role_display }}</span><span class="badge">{{ profile.department }}</span>{% if profile.role == 'teacher' %}<span class="badge">Teacher approval: {% if profile.teacher_approved %}approved{% else %}pending{% endif %}</span>{% endif %}</div><p>Project discovery, applications, and communities will appear as their modules are connected.</p></section>
+{% endblock %}

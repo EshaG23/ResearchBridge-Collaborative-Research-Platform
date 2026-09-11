@@ -14,3 +14,6 @@ SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_PRELOAD = True
 # Configure a trusted proxy header only after verifying the chosen host's behaviour.
+
+if AUTHENTICATION_MODE == "demo":
+    raise ImproperlyConfigured("Fixed-code demo authentication is restricted to local development.")

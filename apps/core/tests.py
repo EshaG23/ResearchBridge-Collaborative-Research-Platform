@@ -6,10 +6,10 @@ class FoundationRoutingTests(TestCase):
     def test_entry_routes_to_sign_in(self):
         self.assertRedirects(self.client.get("/"), "/accounts/login/")
 
-    def test_sign_in_does_not_claim_working_otp(self):
+    def test_sign_in_explains_demo_mode(self):
         response = self.client.get("/accounts/login/")
-        self.assertContains(response, "Sign-in will be available")
-        self.assertNotContains(response, '<form')
+        self.assertContains(response, "Continue with email")
+        self.assertContains(response, '<form')
 
     def test_private_uploads_are_not_publicly_routed(self):
         self.assertEqual(self.client.get("/media/signed-agreement.pdf").status_code, 404)

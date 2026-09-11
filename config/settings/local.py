@@ -3,6 +3,11 @@ from django.core.management.utils import get_random_secret_key
 
 DEBUG = True
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]"]
+AUTHENTICATION_MODE = os.environ.get('RESEARCHBRIDGE_AUTH_MODE', 'demo')
+if AUTHENTICATION_MODE == 'demo':
+    DATA_DIR = BASE_DIR / 'private' / 'demo'
+    DATABASES['default']['NAME'] = DATA_DIR / 'db.sqlite3'
+    MEDIA_ROOT = DATA_DIR / 'uploads'
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 MEDIA_ROOT.mkdir(parents=True, exist_ok=True)
 if not SECRET_KEY:

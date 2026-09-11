@@ -11,3 +11,13 @@ def ui_preview(request, section="discover"):
     labels = {"discover": "Discover projects", "projects": "My projects", "communities": "Communities", "components": "Interface components"}
     return render(request, "core/preview.html", {"section": section, "page_title": labels[section], "ui_preview": True})
 
+
+
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import never_cache
+
+@login_required
+@never_cache
+@require_GET
+def dashboard(request):
+    return render(request, 'core/dashboard.html', {'page_title': 'Your workspace', 'profile': request.user.profile})
