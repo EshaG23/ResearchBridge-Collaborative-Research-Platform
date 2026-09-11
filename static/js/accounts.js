@@ -4,9 +4,9 @@
   if (email && submit) {
     const validate = () => {
       const value = email.value.trim();
-      const valid = /^[^\s@]+@rbunagpur\.in$/i.test(value) && email.validity.typeMismatch === false;
+      const valid = /^[^\s@]+@(rbunagpur|rknec)\.in$/i.test(value) && email.validity.typeMismatch === false;
       submit.disabled = !valid;
-      document.querySelector('[data-email-feedback]').textContent = value && !valid ? 'Use a valid @rbunagpur.in college email address.' : '';
+      document.querySelector('[data-email-feedback]').textContent = value && !valid ? 'Use a valid @rbunagpur.in or @rknec.in college email address.' : '';
     };
     email.addEventListener('input', validate);
     email.addEventListener('blur', () => { email.value = email.value.trim(); validate(); });
@@ -31,7 +31,7 @@
   if (countdown || resend) { tick(); setInterval(tick, 1000); }
   const roleChoices = document.querySelectorAll('[name="role"]');
   const updateRole = () => {
-    const role = document.querySelector('[name="role"]:checked')?.value || 'student';
+    const role = document.querySelector('[name="role"]:checked')?.value || document.querySelector('input[type=hidden][name=role]')?.value || 'student';
     document.querySelectorAll('[data-role-section]').forEach(section => {
       const show = section.dataset.roleSection === role;
       section.hidden = !show;

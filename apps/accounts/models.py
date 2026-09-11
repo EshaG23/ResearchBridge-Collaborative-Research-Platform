@@ -26,6 +26,7 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(unique=True, validators=[validate_college_email])
+    roster_role = models.CharField(max_length=10, blank=True, choices=[('student', 'Student'), ('teacher', 'Teacher')])
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(default=timezone.now)

@@ -279,3 +279,6 @@ a { text-underline-offset:4px; }
   .saved-tags span { font-size:10px; }
 }
 @media(prefers-reduced-motion:reduce) { * { scroll-behavior:auto!important; transition:none!important; } }
+
+.field-help ul { margin: 8px 0; padding-left: 18px; }
+.auth-form .field:has(input[type=password]) { margin-top: 18px; }

@@ -16,7 +16,7 @@ class ProfileWorkflowTests(TestCase):
         self.override = override_settings(MEDIA_ROOT=self.storage.name)
         self.override.enable()
         self.addCleanup(self.override.disable)
-        self.user = User.objects.create_user('demo.student@rbunagpur.in', is_demo=True)
+        self.user = User.objects.create_user('demo.student@rbunagpur.in', is_demo=True, roster_role='student')
         self.client.force_login(self.user)
         self.department = Department.objects.get(name='CSE')
         self.skill = Skill.objects.create(name='Python')
@@ -48,8 +48,8 @@ class ProfileWorkflowTests(TestCase):
             self.assertEqual(stream.read(),original)
         self.client.post('/accounts/logout/')
         self.assertEqual(self.client.get('/dashboard/').status_code,302)
-        self.client.post('/accounts/login/', {'email': self.user.email})
-        self.client.post('/accounts/verify/', {'code': '123456'})
+        self.user.set_password('ExistingTest!2026'); self.user.save()
+        self.client.post('/accounts/login/', {'email': self.user.email, 'password':'ExistingTest!2026'})
         self.assertContains(self.client.get('/dashboard/'),'Demo Student')
         response = self.client.get(f'/profile/resumes/{first.pk}/')
         self.assertEqual(response.status_code,200)
@@ -66,6 +66,7 @@ class ProfileWorkflowTests(TestCase):
         self.assertFalse(profile.teacher_approved)
 
     def test_teacher_optional_fields_and_approval_not_self_granted(self):
+        self.user.roster_role='teacher'; self.user.save()
         data = self.data|{'role':'teacher','availability':'','year':'','teacher_approved':'on'}
         response = self.client.post('/profile/',data)
         self.assertEqual(response.status_code,302)
@@ -78,7 +79,7 @@ class ProfileWorkflowTests(TestCase):
     def test_private_download_denies_another_user(self):
         self.client.post('/profile/',self.data|{'resume':self.pdf()})
         pk = ResumeVersion.objects.get().pk
-        other = User.objects.create_user('other@rbunagpur.in', is_demo=True)
+        other = User.objects.create_user('other@rbunagpur.in', is_demo=True, roster_role='student')
         self.client.force_login(other)
         self.assertEqual(self.client.get(f'/profile/resumes/{pk}/').status_code,404)
 

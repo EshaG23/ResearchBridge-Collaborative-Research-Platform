@@ -24,10 +24,12 @@
       {% include 'components/messages.html' %}
       <form method="post" data-login-form>{% csrf_token %}
         {% if form.non_field_errors %}<div class="notice notice-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
-        {% include 'components/field.html' with field=form.email %}<p class="field-error" data-email-feedback aria-live="polite"></p>
-        <button class="button button-primary full-width" type="submit" data-email-submit>Continue with email {% include 'components/icon.html' with name='arrow' %}</button>
+        {% include 'components/field.html' with field=form.email %}{% include 'components/field.html' with field=form.password %}<p class="field-error" data-email-feedback aria-live="polite"></p>
+        <button class="button button-primary full-width" type="submit" data-email-submit>Login {% include 'components/icon.html' with name='arrow' %}</button>
       </form>
-      {% if demo %}<div class="demo-access"><span class="demo-tag">LOCAL DEMO</span><div><strong>One simple code. More room to explore.</strong><p>Use any valid <b>@rbunagpur.in</b> address with <b>123456</b>. No email is sent or inbox verified.</p></div></div>{% endif %}
+      <p class="field-help"><a href="{% url 'accounts:forgot' %}">Forgot password?</a></p>
+      <div class="auth-access-note"><p class="field-help">Accounts are provided through the university roster. There is no self-registration.</p></div>
+      {% if demo %}<div class="demo-access"><span class="demo-tag">LOCAL DEMO</span><div><strong>Use a registered demo account.</strong><p><b>demo.student@rbunagpur.in</b><br>Initial password: <b>ResearchDemo!2026</b><br>Fictional roster data. Reset OTPs are simulated locally.</p></div></div>{% endif %}
       <div class="auth-reassurance">{% include 'components/icon.html' with name='shield' %}<p>Private research details are shared only with authorised project members.</p></div>
     {% endblock %}</section>
     <div class="auth-bottom-note">A shared space for your next big question.</div>

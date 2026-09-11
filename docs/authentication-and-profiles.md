@@ -1,39 +1,31 @@
-# Modules 3 and 4: authentication and profiles
+# Current authentication: university roster login and password reset
 
-## Try the working local demo
+This supersedes the earlier OTP sign-in and open college-email registration designs.
 
-Open `/accounts/login/`. Following the project owner's updated requirement, any valid `@rbunagpur.in` address can create a local demo identity using `123456`. There is no longer an email allowlist. No email is sent and no ownership of a real inbox is claimed. This remains restricted to DEBUG/local demo mode with separate database and files. Existing non-demo user records cannot be accessed with the fixed code, and production rejects demo mode. Do not use this configuration to store real confidential research. Existing saved demo profiles remain intact. A blank `research.preview@rbunagpur.in` demo identity was created to verify the expanded flow.
+## Login
 
-Accounts are created only when the challenge is verified. Challenges expire after three minutes, allow five wrong code attempts, and are bound to the requesting browser session. Replacement codes invalidate previous challenges; resend cooldown is 60 seconds. Database counters cap five requests per email and thirty per source IP over fifteen minutes. IP keys and OTP values are stored as keyed digests, not plaintext. A database write serializes verification before consuming a challenge, including on SQLite. No external queue/cache dependency is needed.
+Only pre-provisioned users can sign in with email and password. Both students and faculty may use exactly rbunagpur.in or rknec.in. Domains are validated case-insensitively after trimming. Domain eligibility alone never creates an account. No signup endpoint or self-registration is provided. Old OTP verification routes now verify password-reset challenges only and never log users in or create them.
 
-Logout is POST-only and ends the session without deleting saved records. A returning complete profile reaches `/dashboard/`; incomplete profiles return to `/profile/`. Private responses are not cacheable. CSRF protection applies to form submissions.
+Student/faculty roles come from the imported roster. A faculty roster is an administrative approval source for the demonstration; users cannot change the assigned role. Imported names/departments prefill the profile while retaining previously saved details. Incomplete profiles still complete mandatory onboarding; complete profiles go to the dashboard.
 
-## Profile completion
+## Roster storage
 
-Required for both roles: name, department, phone (10–15 digits), skills and research interests. Students also need weekly availability (1–80 hours), year (1–4), and a readable unencrypted PDF résumé (up to 5 MB, 1–50 pages). These limits are configurable implementation choices in the form and can be revised. Teacher previous work and Google Scholar links are optional. No teacher résumé or student-year fields are required for teachers.
+See demo_rosters/students.json and faculty.json plus their README for the five fictional demo accounts and import commands. The files are initial data sources; SQLite is the live database. Django stores password hashes. Re-import preserves existing usable passwords and profiles. Password changes never rewrite plaintext values in the source roster. Real rosters must remain in protected storage and not source control. No MongoDB dependency was introduced.
 
-Use Save draft during onboarding to retain incomplete details. Complete profile validates the full role-specific requirements. After completion, account email and role cannot be changed through profile editing; role correction needs explicit administrative handling. This is a reversible permission default, not a claim of a final college policy.
+`import_roster <file> --demo` is local-demo-only. The real importer requires real mode and omission of --demo. Import is transactional, validates required fields and exact domains, rejects duplicates/conflicting roles, and does not delete accounts missing from a later file.
 
-Selecting Teacher does not grant mentor permissions. An administrator can approve a teacher claim in Django admin > Profiles after the institution's verification procedure. The `is_verified_teacher` property is the permission predicate for upcoming mentor operations. A completed pending teacher profile can reach the account dashboard but has no mentor operations yet.
+## Forgot Password
 
-Demo department fixtures are visibly labelled and separate from real department choices. Run `manage.py seed_demo_taxonomy` explicitly in local demo mode; it is idempotent and creates no users. The project owner has supplied the current department options; see the latest status entry. Skills/interests use shared controlled tables for later matching.
+Registered email → request OTP → verify OTP → new password + confirmation → login with new password.
 
-Each résumé upload creates a new immutable file record; previous versions stay downloadable by their owner. Changing a profile résumé cannot overwrite a stored earlier file. Future applications must reference these version records with protected foreign keys. Owner-only download routes currently serve files as attachments; broader reviewer permissions belong to later modules. Upload/database failures show an error and remove a newly stored orphan file. Malware scanning and deployment request-body caps are not claimed by PDF-format validation.
+Challenges are hashed, tied to the browser session and current password, expire after three minutes, and allow five wrong attempts. Resend requires 60 seconds and invalidates old challenges. Reset requests are limited to five per email and thirty per IP over fifteen minutes. Password login allows ten attempts per email and sixty per IP over fifteen minutes. Login failures use a generic message. Unknown reset emails receive a generic response and cannot get a valid reset grant.
 
-## Data and local setup
+OTP verification creates a signed, session-held reset authorization valid for ten minutes; it does not authenticate the user. Django password validation and matching confirmation are required. Changing the password invalidates outstanding challenges, previous reset grants, and existing authenticated sessions through Django's session authentication hash. Logout and all reset writes are POST/CSRF-protected. Password values are masked in error reporting.
 
-Local demo data now resides in `private/demo/db.sqlite3` and `private/demo/uploads/`. The earlier `private/db.sqlite3` was preserved. Local real mode uses the configured `RESEARCHBRIDGE_DATA_DIR`, defaulting to `private/`. Demo mode is deliberately restricted to DEBUG/local development and refused by production settings. Back up the database and matching uploads together while the server is stopped. No demo seed runs on startup.
+Local demo reset code is 123456. Demo mode stays under DEBUG with isolated private/demo storage and cannot be enabled in production. Real mode uses secure random six-digit reset codes delivered by SMTP. Actual SMTP delivery remains unverified. Before sending real messages, the project email account needs private SMTP credentials and an approved delivery test. Never paste credentials in chat or commit them. Current SMTP environment fields are documented in config/settings/base.py. Django email reference: https://docs.djangoproject.com/en/5.2/topics/email/ .
 
-After pulling these changes, run migrations and the explicit demo taxonomy command using the environment Python executable in README. The current local demo migration and taxonomy setup have already run. Never delete persistent directories during restart.
+## Profiles retained
 
-## Real email status
+Required: name, department, phone, shared skills and research interests. Students additionally provide year 1–4, 1–80 hours/week and PDF résumé. Faculty research history and Scholar URL are optional; no student fields/résumé are required for faculty. Departments follow the owner-supplied list. Draft saving, profile editing, private owner-only résumé downloads and immutable résumé versions remain in place.
 
-The real OTP path is implemented using Django SMTP. It was tested using Django's in-memory email backend, including random-code generation, actual code checking, email failure handling, and verification timestamps. Actual external SMTP delivery remains UNVERIFIED and requires a dedicated email account's private credentials and an approved delivery test.
-
-When ready, set `RESEARCHBRIDGE_AUTH_MODE=real`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, and `SMTP_PASSWORD` in the private process/host environment. The default route is smtp.gmail.com:587 with TLS. Do not paste passwords in chat or commit them. Real mode never accepts the fixed demo code as a shortcut; demo user records cannot be authenticated in real mode. The current local demo database is isolated from real-mode data.
-
-The proposed Gmail App Password eligibility and official setup steps must be checked when an account is actually being configured. No paid service or account purchase was introduced. Django SMTP reference: https://docs.djangoproject.com/en/5.2/topics/email/ . PDF parsing reference: https://pypdf.readthedocs.io/en/stable/modules/PdfReader.html .
-
-## Scope boundary
-
-Modules 3–4 do not implement research discovery, project permissions beyond account/file ownership, applications, or mentor management. The real dashboard is an honest account workspace until the project modules arrive; `/dev/ui/` remains a separate design preview.
+The database and uploaded files are not deleted by logout, password reset, re-import, or ordinary restart. Future applications must reference preserved résumé versions. Project/recruitment/community features remain separate future modules.

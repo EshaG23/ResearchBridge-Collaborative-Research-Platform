@@ -26,8 +26,8 @@ class ProfileForm(forms.ModelForm):
         self.fields['role'].required = True
         if not self.instance.role:
             self.initial['role'] = 'student'
-        if self.instance.completed_at:
-            self.fields['role'].disabled = True
+        self.fields['role'].disabled = True
+        self.initial['role'] = self.instance.user.roster_role or self.instance.role
         for name, field in self.fields.items():
             if name != 'role':
                 field.required = False

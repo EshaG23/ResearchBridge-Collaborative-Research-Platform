@@ -1,0 +1,18 @@
+{
+  "description": "Fictional local demonstration roster; not actual university records. Initial credentials only; password changes live in SQLite.",
+  "role": "teacher",
+  "accounts": [
+    {
+      "name": "Demo Teacher",
+      "email": "demo.teacher@rbunagpur.in",
+      "department": "CSE",
+      "initial_password": "ResearchDemo!2026"
+    },
+    {
+      "name": "Demo Mentor",
+      "email": "faculty.one@rknec.in",
+      "department": "MECH",
+      "initial_password": "ResearchDemo!2026"
+    }
+  ]
+}

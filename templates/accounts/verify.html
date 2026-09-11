@@ -1,17 +1,5 @@
-{% extends 'accounts/login.html' %}
-{% block title %}Verify your code · ResearchBridge{% endblock %}
-{% block authentication %}
-<div class="entry-icon">{% include 'components/icon.html' with name='shield' %}</div>
-<h2 id="signin-title">Enter your code.</h2>
-<p class="intro-copy">{% if demo %}Demo challenge for{% else %}Code sent to{% endif %}<br><strong>{{ challenge.email }}</strong></p>
-{% if demo %}<div class="notice">Demonstration code: <strong>123456</strong>. No inbox ownership is verified.</div>{% endif %}
-{% include 'components/messages.html' %}
-<form method="post" data-code-form>{% csrf_token %}
-{% if form.non_field_errors %}<div class="notice notice-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
-{% include 'components/field.html' with field=form.code %}
-<p class="field-help">Time remaining: <strong data-countdown="{{ remaining }}">{{ remaining }} seconds</strong></p>
-<button class="button button-primary full-width" type="submit" data-verify-submit {% if challenge.consumed or not remaining %}disabled{% endif %}>Verify and continue</button>
-</form>
-<form method="post" action="{% url 'accounts:resend' %}" class="resend-form">{% csrf_token %}<button class="button button-secondary full-width" type="submit" data-resend="{{ cooldown }}" {% if cooldown %}disabled{% endif %}>Request another code</button></form>
-<p class="field-help"><a href="{% url 'accounts:login' %}">Use a different email address</a></p>
-{% endblock %}
+{% extends 'accounts/login.html' %}{% block title %}Verify reset code · ResearchBridge{% endblock %}
+{% block authentication %}<div class="entry-icon">{% include 'components/icon.html' with name='shield' %}</div><h2 id="signin-title">Verify your reset code.</h2><p class="intro-copy">If <strong>{{ reset_email }}</strong> is registered, {% if demo %}a reset code is available for this local demonstration.{% else %}a reset code has been sent to that email.{% endif %}</p>
+{% if demo %}<div class="notice">Demo reset code: <strong>123456</strong>. This does not verify inbox ownership.</div>{% endif %}{% include 'components/messages.html' %}
+<form method="post" data-code-form>{% csrf_token %}{% if form.non_field_errors %}<div class="notice notice-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}{% include 'components/field.html' with field=form.code %}<p class="field-help">Time remaining: <strong data-countdown="{{ remaining }}">{{ remaining }} seconds</strong></p><button class="button button-primary full-width" type="submit" data-verify-submit {% if challenge.consumed or not remaining %}disabled{% endif %}>Verify code</button></form>
+<form method="post" action="{% url 'accounts:resend' %}" class="resend-form">{% csrf_token %}<button class="button button-secondary full-width" type="submit" data-resend="{{ cooldown }}" {% if cooldown %}disabled{% endif %}>Request another code</button></form><p class="field-help"><a href="{% url 'accounts:forgot' %}">Use a different registered email</a></p>{% endblock %}

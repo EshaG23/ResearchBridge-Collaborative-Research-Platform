@@ -2,7 +2,11 @@
 
 College research collaboration for eligible `rbunagpur.in` users. This is a student project, not a claim of official university endorsement.
 
-Modules 1–4 provide the foundation, shared UI, local demo OTP authentication, and persisted role-specific profiles. The ten-part product specification remains the source of truth; coding modules do not replace its numbering. Real SMTP delivery still needs private setup and testing. Research workflows arrive in later modules.
+Modules 1–4 provide the foundation, shared UI, roster-based password authentication, and persisted role-specific profiles. The ten-part product specification remains the source of truth; coding modules do not replace its numbering. Real SMTP delivery still needs private setup and testing. Research workflows arrive in later modules.
+
+## Demo accounts
+
+See [demo roster instructions and credentials](demo_rosters/README.md). After initial migrations/taxonomy setup, import both roster files using those commands. The current local demo is already imported.
 
 ## Run locally
 
@@ -17,7 +21,7 @@ Python 3.13 is installed on the current machine. From this project directory, th
 
 ```
 
-Open http://127.0.0.1:8000/. The root opens sign-in. Use demo.student@rbunagpur.in with demo code 123456, then complete the mandatory profile. Review the local interface at http://127.0.0.1:8000/dev/ui/ and shared components at http://127.0.0.1:8000/dev/ui/components/. These previews are disabled in production and contain no real research data.
+Open http://127.0.0.1:8000/. The root opens sign-in. Use demo.student@rbunagpur.in with initial password ResearchDemo!2026, then complete the mandatory profile. OTP 123456 is now only for local Forgot Password. Review the local interface at http://127.0.0.1:8000/dev/ui/ and shared components at http://127.0.0.1:8000/dev/ui/components/. These previews are disabled in production and contain no real research data.
 
 For a fresh checkout:
 
@@ -46,7 +50,7 @@ Use the same Python executable for checks:
 
 ```
 
-Optional local administration: run `manage.py createsuperuser` using that Python executable. Enter an eligible college email and a private administrator password interactively. This is a maintenance account, not proof of inbox ownership or teacher status. No credentials are seeded. Student/teacher sign-in uses OTP. Teacher approval is managed in admin > Profiles.
+Optional local administration: run `manage.py createsuperuser` using that Python executable. Enter an eligible college email and a private administrator password interactively. This is a maintenance account, not proof of inbox ownership or teacher status. No credentials are seeded. Student/teacher roles come from imported rosters. Login uses passwords; OTP is only for password reset.
 
 ## Documentation
 

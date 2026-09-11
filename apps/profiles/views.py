@@ -14,7 +14,7 @@ from .forms import ProfileForm
 @never_cache
 @require_http_methods(['GET', 'POST'])
 def edit(request):
-    profile, _ = Profile.objects.get_or_create(user=request.user)
+    profile, _ = Profile.objects.get_or_create(user=request.user, defaults={"role": request.user.roster_role})
     draft = request.POST.get('action') == 'draft' and not profile.completed_at
     form = ProfileForm(request.POST or None, request.FILES or None, instance=profile, draft=draft)
     if request.method == 'POST' and form.is_valid():

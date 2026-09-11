@@ -8,7 +8,7 @@ class FoundationRoutingTests(TestCase):
 
     def test_sign_in_explains_demo_mode(self):
         response = self.client.get("/accounts/login/")
-        self.assertContains(response, "Continue with email")
+        self.assertContains(response, "Login")
         self.assertContains(response, '<form')
 
     def test_private_uploads_are_not_publicly_routed(self):
