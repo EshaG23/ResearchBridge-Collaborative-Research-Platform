@@ -25,3 +25,5 @@ The form-field include renders Django bound widgets. Future forms should supply 
 Desktop uses a navy sidebar, compact white top bar, and content canvas. Navigation collapses at 760px; its button exposes expanded state. Project-card samples use three columns above 1150px, two at intermediate widths, and one at phone widths. Tables scroll inside a labelled focusable region. Focus outlines and skip navigation are visible; controls have labels, disabled states, and status messages. Reduced-motion preferences are respected.
 
 Browser verification and limitations are recorded in `status.md`. No full accessibility audit is claimed.
+
+Visual refinement: `static/css/refinement.css` layers the entrance and workspace polish over shared base controls. Discovery now uses clearly labelled template-only illustrative topic cards, not actual project records; all research actions remain pending their modules.

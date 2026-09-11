@@ -1,3 +1,43 @@
-{% extends 'base.html' %}{% block title %}Sign in · ResearchBridge{% endblock %}{% block body_class %}auth-body{% endblock %}{% block layout %}
-<div class="auth-layout"><aside class="auth-aside"><div class="brand">{% include 'components/brand.html' %}</div><div class="auth-intro"><p class="eyebrow">IDEAS. PEOPLE. PROGRESS.</p><h1>A shared space<br>for your research.</h1><p>Find your team, work with a mentor, and build something worth pursuing.</p><ol class="auth-steps"><li><span>01</span><div><strong>Discover an idea</strong><p>Explore research across departments.</p></div></li><li><span>02</span><div><strong>Build your team</strong><p>Connect through a guided selection process.</p></div></li><li><span>03</span><div><strong>Make progress together</strong><p>Keep your work in a private project space.</p></div></li></ol></div><p class="auth-aside-footer">An Idea Lab student project <span>Ramdeobaba University, Nagpur</span></p></aside>
-<main id="main" class="auth-main"><div class="auth-topline">STUDENTS &amp; TEACHERS</div><section class="auth-form" aria-labelledby="signin-title"><span class="label-chip">College access</span><h2 id="signin-title">Welcome to ResearchBridge</h2><p class="intro-copy">Use your college email to access your research workspace.</p>{% include 'components/messages.html' %}<div class="field"><label for="college-email">College email address</label><input id="college-email" type="email" placeholder="yourname@rbunagpur.in" autocomplete="email" disabled aria-describedby="email-help"><p class="field-help" id="email-help">Only @rbunagpur.in email addresses are eligible.</p></div><button class="button button-primary full-width" disabled aria-describedby="signin-status">Continue with email {% include 'components/icon.html' with name='arrow' %}</button><p class="availability" id="signin-status">Sign-in will be available in an upcoming build.</p><div class="auth-reassurance">{% include 'components/icon.html' with name='shield' %}<p>Private project details are available only to authorised project members.</p></div></section><footer class="auth-footer">ResearchBridge <span>Research starts with a connection.</span></footer></main></div>{% endblock %}
+{% extends 'base.html' %}
+{% block title %}Sign in · ResearchBridge{% endblock %}
+{% block body_class %}auth-body{% endblock %}
+{% block layout %}
+<header class="entrance-header">
+  <div class="brand">{% include 'components/brand.html' %}</div>
+  <span class="institution-label">Ramdeobaba University <span>Nagpur · Idea Lab project</span></span>
+</header>
+<div class="auth-layout">
+  <aside class="auth-aside">
+    <div class="auth-intro">
+      <p class="eyebrow"><span class="tiny-line"></span> A PLACE FOR RESEARCH TO BEGIN</p>
+      <h1>Great ideas. <br>Shared purpose. <br><em>Real progress.</em></h1>
+      <p>Bring your curiosity. Find the people and the space to turn it into meaningful research.</p>
+    </div>
+    <div class="research-path" aria-label="Research collaboration journey">
+      <div class="path-caption"><span>THE RESEARCH JOURNEY</span><span>01 — 03</span></div>
+      <ol class="auth-steps">
+        <li><span>01</span><div><strong>Start with an idea</strong><p>Discover opportunities across departments.</p></div>{% include 'components/icon.html' with name='arrow' %}</li>
+        <li><span>02</span><div><strong>Find your people</strong><p>Connect with a mentor and your research team.</p></div>{% include 'components/icon.html' with name='arrow' %}</li>
+        <li><span>03</span><div><strong>Build, review, move forward</strong><p>A private workspace for every step of the work.</p></div>{% include 'components/icon.html' with name='arrow' %}</li>
+      </ol>
+    </div>
+    <div class="auth-aside-footer">{% include 'components/icon.html' with name='shield' %}<span>Your ideas deserve a trusted space.</span></div>
+  </aside>
+  <main id="main" class="auth-main">
+    <div class="auth-topline"><span class="label-chip">COLLEGE ACCESS</span><span>For students &amp; teachers</span></div>
+    <section class="auth-form" aria-labelledby="signin-title">
+      <div class="entry-icon">{% include 'components/icon.html' with name='book' %}</div>
+      <p class="eyebrow">YOUR RESEARCH WORKSPACE</p>
+      <h2 id="signin-title">Welcome aboard.</h2>
+      <p class="intro-copy">One college. Many possibilities.<br>Sign in with your college email to get started.</p>
+      {% include 'components/messages.html' %}
+      <div class="field"><label for="college-email">College email address</label><div class="email-control"><span aria-hidden="true">@</span><input id="college-email" type="email" placeholder="yourname@rbunagpur.in" autocomplete="email" disabled aria-describedby="email-help"></div><p class="field-help" id="email-help">Use your official <strong>@rbunagpur.in</strong> email address.</p></div>
+      <button class="button button-primary full-width" disabled aria-describedby="signin-status">Continue with email {% include 'components/icon.html' with name='arrow' %}</button>
+      <p class="availability" id="signin-status">Sign-in will be available in an upcoming build.</p>
+      <div class="auth-reassurance">{% include 'components/icon.html' with name='shield' %}<div><strong>Built around confidentiality</strong><p>Full research details stay within authorised project communities.</p></div></div>
+    </section>
+    <div class="auth-bottom-note"><span>DISCOVER</span><i></i><span>COLLABORATE</span><i></i><span>CONTRIBUTE</span></div>
+  </main>
+</div>
+<footer class="entrance-footer"><span>ResearchBridge · An Idea Lab student project</span><span>Made for curious minds. Built for shared progress.</span></footer>
+{% endblock %}

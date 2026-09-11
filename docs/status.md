@@ -42,3 +42,11 @@ Verification completed:
 One browser tab creation took unusually long; a later focus-inspection call timed out, so focus/dismissal was verified from the current DOM snapshot instead. No blanket accessibility audit is claimed.
 
 Modules 3–20 remain pending. Authentication, discovery filters, idea creation, actual notifications, profiles, and community workflows are not connected yet. No database schema/data changes in Module 2. The full agreed scope is unchanged.
+
+## Module 2 visual refinement
+
+Redesigned the entrance as a framed two-panel layout with a research-journey sidebar, stronger heading hierarchy, focused email panel, and replaceable text identity. Refined shared navigation, milestone banner, empty states, community destinations, controls, and card styling through `static/css/refinement.css`.
+
+Discovery now contains three explicitly labelled illustrative topic cards so the intended recruitment design can be reviewed. These are template-only design samples, not published records or achievements. No data, permission rules, or authentication behaviour changed.
+
+Validation: all 12 existing Django tests passed from the project directory. An initial test invocation from the parent directory discovered zero tests and was rerun correctly. Desktop entrance and three-column discovery screenshots inspected; 390px mobile sign-in and discovery checked for horizontal overflow. Fixed heading whitespace at the phone breakpoint and text encoding in preview templates. No real workflows or new module implementation claimed.
