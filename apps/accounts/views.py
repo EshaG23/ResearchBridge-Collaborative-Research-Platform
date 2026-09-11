@@ -29,8 +29,7 @@ def sign_in(request):
         else:
             request.session['otp_challenge'] = str(challenge.id)
             return redirect('accounts:verify')
-    return render(request, 'accounts/login.html', {'form': form, 'demo': demo_mode(),
-                  'demo_identities': settings.DEMO_IDENTITIES if demo_mode() else []})
+    return render(request, 'accounts/login.html', {'form': form, 'demo': demo_mode()})
 
 def current_challenge(request):
     try:

@@ -2,7 +2,7 @@
 
 ## Try the working local demo
 
-Open `/accounts/login/`. Use `demo.student@rbunagpur.in`, `demo.applicant@rbunagpur.in`, or `demo.teacher@rbunagpur.in` with `123456`. No email is sent and no ownership of a real inbox is claimed. Other emails cannot use the fixed code. A demo teacher profile was saved during browser verification using clearly labelled demo details; its teacher approval remains pending. Student/applicant identities are available for fresh onboarding.
+Open `/accounts/login/`. Following the project owner's updated requirement, any valid `@rbunagpur.in` address can create a local demo identity using `123456`. There is no longer an email allowlist. No email is sent and no ownership of a real inbox is claimed. This remains restricted to DEBUG/local demo mode with separate database and files. Existing non-demo user records cannot be accessed with the fixed code, and production rejects demo mode. Do not use this configuration to store real confidential research. Existing saved demo profiles remain intact. A blank `research.preview@rbunagpur.in` demo identity was created to verify the expanded flow.
 
 Accounts are created only when the challenge is verified. Challenges expire after three minutes, allow five wrong code attempts, and are bound to the requesting browser session. Replacement codes invalidate previous challenges; resend cooldown is 60 seconds. Database counters cap five requests per email and thirty per source IP over fifteen minutes. IP keys and OTP values are stored as keyed digests, not plaintext. A database write serializes verification before consuming a challenge, including on SQLite. No external queue/cache dependency is needed.
 

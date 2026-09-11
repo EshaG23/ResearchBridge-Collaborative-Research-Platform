@@ -25,8 +25,8 @@ def request_code(email, binding, ip):
     email = normalise_college_email(email)
     mode = settings.AUTHENTICATION_MODE
     if mode == 'demo':
-        if not demo_mode() or email not in settings.DEMO_IDENTITIES:
-            raise AuthenticationError('Demo access is limited to the listed demonstration identities.')
+        if not demo_mode():
+            raise AuthenticationError('Fixed-code demonstration is available only in local development.')
     elif mode != 'real':
         raise AuthenticationError('Sign-in is not configured yet.')
     if mode == 'real' and settings.EMAIL_BACKEND not in {
@@ -85,7 +85,7 @@ def verify_code(challenge_id, binding, code):
             return None, error
         challenge = OTPChallenge.objects.get(pk=challenge_id)
         correct = constant_time_compare(challenge.code_digest, digest(f'{challenge.id}:{challenge.email}:{code}'))
-        if challenge.mode == 'demo' and (not demo_mode() or challenge.email not in settings.DEMO_IDENTITIES):
+        if challenge.mode == 'demo' and not demo_mode():
             correct = False
         if correct:
             existing = User.objects.filter(email=challenge.email).first()

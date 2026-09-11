@@ -26,9 +26,11 @@ class AuthenticationWorkflowTests(TestCase):
             self.client.post('/accounts/login/', {'email': email})
         self.assertFalse(OTPChallenge.objects.exists())
 
-    def test_demo_cannot_authenticate_arbitrary_or_existing_real_user(self):
-        with self.assertRaises(AuthenticationError):
-            request_code('real.student@rbunagpur.in','binding','ip')
+    def test_any_college_email_can_use_local_demo_but_real_records_are_protected(self):
+        challenge = request_code('new.researcher@rbunagpur.in','binding','ip')
+        user, _ = verify_code(challenge.pk, 'binding', '123456')
+        self.assertTrue(user.is_demo)
+        self.assertIsNone(user.email_verified_at)
         User.objects.create_user(self.email)
         with self.assertRaises(AuthenticationError):
             request_code(self.email,'binding','ip')

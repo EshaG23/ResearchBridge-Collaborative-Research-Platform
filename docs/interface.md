@@ -27,3 +27,10 @@ Desktop uses a navy sidebar, compact white top bar, and content canvas. Navigati
 Browser verification and limitations are recorded in `status.md`. No full accessibility audit is claimed.
 
 Visual refinement: `static/css/refinement.css` layers the entrance and workspace polish over shared base controls. Discovery now uses clearly labelled template-only illustrative topic cards, not actual project records; all research actions remain pending their modules.
+
+
+## Studio visual redesign (current)
+
+The project owner requested a complete, more colourful visual direction. `static/css/studio.css` defines mint, blue, lilac and peach surfaces against dark navy/green navigation. The login now has a collaboration diagram and a focused entry form. Profiles have three numbered sections, native checkbox chips, a résumé panel, and section-navigation links. The account dashboard displays real saved role, department, status, skills and interests; future research features remain labelled as pending. Discovery and community previews inherit the updated palette. No user profile records were changed by the redesign.
+
+Login demo guidance now permits any valid college-domain address with 123456 in local demo mode only. This supersedes the earlier designated-identity text.

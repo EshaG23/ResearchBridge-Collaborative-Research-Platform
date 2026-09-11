@@ -67,7 +67,6 @@ SECURE_CONTENT_TYPE_NOSNIFF = True
 # No OTP implementation is active yet. Never log OTPs with a console email backend.
 EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
 AUTHENTICATION_MODE = os.environ.get('RESEARCHBRIDGE_AUTH_MODE', 'disabled')
-DEMO_IDENTITIES = ['demo.student@rbunagpur.in', 'demo.applicant@rbunagpur.in', 'demo.teacher@rbunagpur.in']
 EMAIL_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('SMTP_PORT', '587'))
 EMAIL_HOST_USER = os.environ.get('SMTP_USER', '')

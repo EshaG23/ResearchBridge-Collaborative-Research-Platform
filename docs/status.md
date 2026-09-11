@@ -66,3 +66,12 @@ Modules 5–20 remain pending. Full product scope unchanged. See authentication-
 ## Profile options update
 
 Year choices are now 1–4. The project owner supplied CSE, AIML, AIDS, BCA, MCA, EE, ECS, MECH, CIVIL, ROBOTICS. A data migration adds these exact labels for fresh and existing databases. Existing profile department references remain intact and appear on that profile until changed; new profiles use the supplied list. Earlier demo-department/year defaults are superseded.
+
+
+## Complete visual redesign and expanded local demo access
+
+User-authorised correction: replace the former restrained design with a more colourful, detailed interface, and allow any structurally valid rbunagpur.in email to use 123456 locally. Implemented a new login collaboration diagram, colourful numbered profile sections, selectable skill/interest chips, résumé treatment, profile section navigation, and a detailed dashboard using only actual saved profile data. Shared discovery/component/community styling updated. Years 1–4 and supplied department options remain intact.
+
+The fixed-code flow still requires DEBUG/local demo mode, exact college domain, and isolated demo storage. Existing real user records remain protected. No inbox ownership is claimed. Production demo login remains disabled; actual SMTP delivery is still pending.
+
+All 30 regression tests passed after expanding the demo rule, including authentication of a new college address, refusal of existing non-demo accounts, expiry/attempt/rate protections, and profile/file behaviour. Browser verification showed a previously unlisted research.preview@rbunagpur.in address using 123456 and reaching required onboarding. Reviewed desktop dashboard/profile/login and phone profile/login; no horizontal overflow at 390px. Original saved profiles and résumés were not changed. A blank test demo account remains for the new-email check. Signed out after browser verification and left login ready for the user.

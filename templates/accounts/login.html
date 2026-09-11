@@ -1,48 +1,36 @@
 {% extends 'base.html' %}
 {% block title %}Sign in · ResearchBridge{% endblock %}
-{% block body_class %}auth-body{% endblock %}
+{% block body_class %}auth-body studio-auth{% endblock %}
 {% block layout %}
-<header class="entrance-header">
-  <div class="brand">{% include 'components/brand.html' %}</div>
-  <span class="institution-label">Ramdeobaba University <span>Nagpur · Idea Lab project</span></span>
-</header>
+<header class="entrance-header"><div class="brand">{% include 'components/brand.html' %}</div><div class="institution-label">Ramdeobaba University<span>Idea Lab · Nagpur</span></div></header>
 <div class="auth-layout">
   <aside class="auth-aside">
-    <div class="auth-intro">
-      <p class="eyebrow"><span class="tiny-line"></span> A PLACE FOR RESEARCH TO BEGIN</p>
-      <h1>Great ideas. <br>Shared purpose. <br><em>Real progress.</em></h1>
-      <p>Bring your curiosity. Find the people and the space to turn it into meaningful research.</p>
+    <div class="auth-intro"><p class="eyebrow"><span class="live-dot"></span> A CAMPUS FULL OF POSSIBILITIES</p><h1>Your next idea<br>deserves <em>a team.</em></h1><p>Meet curious minds. Connect with mentors.<br>Give your research a place to grow.</p></div>
+    <div class="connection-board" aria-label="From a research idea to a private team workspace">
+      <div class="board-top"><span class="board-label">THE COLLABORATION PATH</span><span class="board-code">RB / 01</span></div>
+      <div class="idea-node"><span class="node-icon">{% include 'components/icon.html' with name='book' %}</span><div><small>IT STARTS WITH</small><strong>A question worth exploring</strong></div></div>
+      <div class="board-connector" aria-hidden="true"></div>
+      <div class="people-nodes"><div><span class="person-dot blue">{% include 'components/icon.html' with name='users' %}</span><strong>Students</strong><small>Fresh perspectives</small></div><span class="connection-plus" aria-hidden="true">+</span><div><span class="person-dot peach">{% include 'components/icon.html' with name='book' %}</span><strong>Mentors</strong><small>Experience &amp; guidance</small></div></div>
+      <div class="board-connector" aria-hidden="true"></div>
+      <div class="team-node">{% include 'components/icon.html' with name='shield' %}<div><strong>Your private research space</strong><small>Shared work. Clear progress. Protected ideas.</small></div></div>
     </div>
-    <div class="research-path" aria-label="Research collaboration journey">
-      <div class="path-caption"><span>THE RESEARCH JOURNEY</span><span>01 — 03</span></div>
-      <ol class="auth-steps">
-        <li><span>01</span><div><strong>Start with an idea</strong><p>Discover opportunities across departments.</p></div>{% include 'components/icon.html' with name='arrow' %}</li>
-        <li><span>02</span><div><strong>Find your people</strong><p>Connect with a mentor and your research team.</p></div>{% include 'components/icon.html' with name='arrow' %}</li>
-        <li><span>03</span><div><strong>Build, review, move forward</strong><p>A private workspace for every step of the work.</p></div>{% include 'components/icon.html' with name='arrow' %}</li>
-      </ol>
-    </div>
-    <div class="auth-aside-footer">{% include 'components/icon.html' with name='shield' %}<span>Your ideas deserve a trusted space.</span></div>
+    <div class="auth-values"><span>01 <strong>Discover</strong></span><span>02 <strong>Connect</strong></span><span>03 <strong>Create</strong></span></div>
   </aside>
   <main id="main" class="auth-main">
-    <div class="auth-topline"><span class="label-chip">COLLEGE ACCESS</span><span>For students &amp; teachers</span></div>
-    <section class="auth-form" aria-labelledby="signin-title">
-    {% block authentication %}
-      <div class="entry-icon">{% include 'components/icon.html' with name='book' %}</div>
-      <h2 id="signin-title">Welcome aboard.</h2>
-      <p class="intro-copy">Sign in with your college email to get started.</p>
+    <div class="auth-topline"><span class="label-chip">COLLEGE WORKSPACE</span><span>Students &amp; teachers</span></div>
+    <section class="auth-form" aria-labelledby="signin-title">{% block authentication %}
+      <div class="entry-icon">{% include 'components/icon.html' with name='arrow' %}</div>
+      <p class="eyebrow">LET’S GET YOU CONNECTED</p><h2 id="signin-title">Hello, researcher.</h2><p class="intro-copy">Your ideas, people, and progress.<br>All in one place.</p>
       {% include 'components/messages.html' %}
-      {% if demo %}<div class="notice"><strong>Local demonstration</strong><p>No email is sent. Use code <strong>123456</strong> with one of these designated identities:</p><ul class="demo-identities">{% for email in demo_identities %}<li>{{ email }}</li>{% endfor %}</ul></div>{% endif %}
       <form method="post" data-login-form>{% csrf_token %}
         {% if form.non_field_errors %}<div class="notice notice-error" role="alert">{{ form.non_field_errors }}</div>{% endif %}
-        {% include 'components/field.html' with field=form.email %}
-        <p class="field-error" data-email-feedback aria-live="polite"></p>
+        {% include 'components/field.html' with field=form.email %}<p class="field-error" data-email-feedback aria-live="polite"></p>
         <button class="button button-primary full-width" type="submit" data-email-submit>Continue with email {% include 'components/icon.html' with name='arrow' %}</button>
       </form>
-      <div class="auth-reassurance">{% include 'components/icon.html' with name='shield' %}<div><strong>Built around confidentiality</strong><p>Full research details stay within authorised project communities.</p></div></div>
-    {% endblock %}
-    </section>
-    <div class="auth-bottom-note"><span>DISCOVER</span><i></i><span>COLLABORATE</span><i></i><span>CONTRIBUTE</span></div>
+      {% if demo %}<div class="demo-access"><span class="demo-tag">LOCAL DEMO</span><div><strong>One simple code. More room to explore.</strong><p>Use any valid <b>@rbunagpur.in</b> address with <b>123456</b>. No email is sent or inbox verified.</p></div></div>{% endif %}
+      <div class="auth-reassurance">{% include 'components/icon.html' with name='shield' %}<p>Private research details are shared only with authorised project members.</p></div>
+    {% endblock %}</section>
+    <div class="auth-bottom-note">A shared space for your next big question.</div>
   </main>
-</div>
-<footer class="entrance-footer"><span>ResearchBridge · An Idea Lab student project</span><span>Made for curious minds. Built for shared progress.</span></footer>
+</div><footer class="entrance-footer"><span>ResearchBridge · An Idea Lab student project</span><span>Curiosity brings us together.</span></footer>
 {% endblock %}
