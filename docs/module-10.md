@@ -1,0 +1,13 @@
+# Module 10 — applications and résumé snapshots
+
+Students can open a recruiting project and choose Apply to this project. The original proposer and faculty cannot apply. The project must still be recruiting with an active approved mentor at confirmation time.
+
+Choose a saved, owned profile résumé version or upload a different valid PDF. Add an introduction and optionally enter an academic score with its scale. Save draft & review shows a copied profile snapshot and a protected résumé download before final confirmation. Existing PDFs can also be downloaded from the selection form. New application uploads never overwrite the profile résumé. Saving a revised draft refreshes profile details and asks for a résumé choice again; uploaded drafts must reselect the file when edited.
+
+Confirm & submit records submission time, freezes the portal's editable draft and notifies the applicant and attached mentor. The unique project/applicant constraint and serialised services prevent duplicate applications/events. My applications shows drafts and submitted status. The mentor opens View applications on their project to access submitted records and the exact résumé. Other students, unrelated faculty and the student proposer cannot retrieve these private records. Mentors cannot access unsubmitted drafts.
+
+Profile snapshots include name, college email, department, phone, year, availability, skills and interests. Later profile/résumé edits do not change a submitted application. Profile résumé references use PROTECT; application-specific PDFs use random private storage paths. Draft revisions prevent submission from a stale review screen. A closed project or revoked mentor eligibility prevents submission. Failed database/file operations do not claim success; newly stored files are cleaned up if metadata saving fails.
+
+The required baseline application workflow is implemented. Optional PDF extraction/autofill is not implemented; users enter academic details themselves and no values are guessed. Applicant ranking, shortlisting, meetings and selection belong to Module 11 and later.
+
+Validation: all 51 relevant recruitment/project/mentorship/core tests passed, including 7 new application tests covering source selection, immutable submission behaviour, profile preservation, permissions, retries, persistence, stale drafts, closed recruitment, CSRF, invalid PDFs, storage failure cleanup and notification rollback. Migrations applied and no missing model migrations. Browser verified the live Apply action, owned résumé choices and the application form without submitting a new application on the user's behalf.

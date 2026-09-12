@@ -111,3 +111,10 @@ All 68 regression tests passed, including 13 new mentorship tests. Migrations ap
 Implemented authenticated project discovery on Dashboard and a dedicated sidebar page, recruitment-only search, department/domain/skill filters, four sorting choices, stable pagination, clear-filter controls and contextual empty/error states. Cards include mentor/proposer identity and retain three/two/one responsive columns. Unpublished/closed records and confidential contents are excluded.
 
 Validation: all 44 affected project/mentorship/core tests passed, including 8 new discovery tests. No migration changes detected. Browser checked real records and CSE filtering from two results to one; desktop grid measured at three columns. Existing project records preserved. Application workflows begin in Module 10.
+
+
+## Module 10 — baseline completed
+
+Implemented résumé choice/upload, private reviewable application drafts, confirmation, preserved profile/résumé snapshots, My applications and mentor-only submitted application access. Duplicate submission protection, notifications, stale-review checks and recruitment eligibility are enforced server-side. Optional PDF autofill remains unimplemented; manual academic score entry is available. No scope change to later applicant review or selection workflows.
+
+All 51 relevant tests passed, including 7 new application tests. Migration applied; Django checks and no-missing-migration checks passed. Browser verified the live Apply link and selection form using an existing student session. No application was submitted against user data during verification. See module-10.md.

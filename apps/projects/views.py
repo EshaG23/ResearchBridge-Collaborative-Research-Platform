@@ -52,12 +52,15 @@ def edit(request, pk=None):
 def detail(request, pk):
     project = get_object_or_404(Project.objects.select_related('creator__profile','mentor__profile','domain').prefetch_related('departments','skills'),pk=pk)
     require_permission(can_view_project(request.user,project))
+    from apps.recruitment.permissions import can_apply
+    from apps.recruitment.models import Application
+    application = Application.objects.filter(project=project,applicant=request.user).first()
     from apps.mentorship.models import MentorRequest
     mentor_request = MentorRequest.objects.filter(search__project=project, teacher=request.user, state='pending').first() if approved_teacher(request.user) else None
     # Never load the confidential relation on the recruitment page.
     return render(request,'projects/detail.html',{'page_title':'Project overview','project':project,
         'can_manage':can_manage_project(request.user,project),
-        'can_private':can_view_confidential(request.user,project), 'mentor_request':mentor_request})
+        'can_private':can_view_confidential(request.user,project), 'mentor_request':mentor_request, 'can_apply':can_apply(request.user,project), 'application':application, 'can_review_applications':approved_teacher(request.user) and project.mentor_id==request.user.pk})
 
 @login_required
 @never_cache
