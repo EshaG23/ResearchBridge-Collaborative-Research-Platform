@@ -118,3 +118,10 @@ Validation: all 44 affected project/mentorship/core tests passed, including 8 ne
 Implemented résumé choice/upload, private reviewable application drafts, confirmation, preserved profile/résumé snapshots, My applications and mentor-only submitted application access. Duplicate submission protection, notifications, stale-review checks and recruitment eligibility are enforced server-side. Optional PDF autofill remains unimplemented; manual academic score entry is available. No scope change to later applicant review or selection workflows.
 
 All 51 relevant tests passed, including 7 new application tests. Migration applied; Django checks and no-missing-migration checks passed. Browser verified the live Apply link and selection form using an existing student session. No application was submitted against user data during verification. See module-10.md.
+
+
+## Module 11 — completed
+
+Added applicant-management overview, name/status filters and counts; mentor-only private review; shortlisting, not-selected/reopen and final selection with position-capacity enforcement; immutable decision-history records; optional private meeting invitations with IST timestamps, HTTPS links and cancellation history. In-app notifications link directly to authorised application context. Student proposers receive a restricted overview only, with no résumé, contact, meeting or decision access.
+
+All 95 tests passed, including 12 new review/meeting tests. Migrations applied and no missing migration changes detected. Browser inspection used isolated test-database sample pages because the live demo has no applications after its reset. Checked the desktop applicant table, review actions and phone meeting form; live reset data preserved. Offer-letter issuance remains Module 12. See module-11.md.

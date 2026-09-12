@@ -14,7 +14,7 @@ This document records the overall target rules. Modules 1–7 now enforce roster
 | Project mentor | Applicant selection, NDA oversight, community creation, leader appointment, IP publishing |
 | Administrator | Explicit maintenance powers; not automatic project membership |
 
-The student proposer can see applicant overviews; detailed résumé access is unresolved. A teacher claim does not grant teacher powers. A teacher is not automatically mentor of every project. Original proposer, mentor, and team leader remain separate.
+The student proposer can see applicant overviews only. Module 11 restricts detailed applications, contact information, résumés and meeting details to the applicant and current approved mentor. A teacher claim does not grant teacher powers. A teacher is not automatically mentor of every project. Original proposer, mentor, and team leader remain separate.
 
 Check permissions server-side for pages, writes, downloads, polling, search, notifications, and document versions. Every nested resource must belong to the authorised project. Signed agreements must not be visible to other students. Internal comments are visible inside the private community only.
 

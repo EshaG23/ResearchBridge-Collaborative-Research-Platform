@@ -1,0 +1,5 @@
+{% extends 'layouts/member.html' %}{% block member_content %}
+<section class="page-hero private-hero"><div><p class="eyebrow">A CONVERSATION CAN MAKE THE DIFFERENCE</p><h1>Make time to meet.</h1><p>{{ application.snapshot.name }} · {{ application.project.title }}</p></div></section>
+<form method="post" class="panel document-upload">{% csrf_token %}{{ form.request_key }}{{ form.revision }}{% if form.errors %}<div class="notice notice-error" role="alert">{{ form.non_field_errors }}{{ form.request_key.errors }}{{ form.revision.errors }}Please check the fields below.</div>{% endif %}
+{% include 'components/field.html' with field=form.message %}{% include 'components/field.html' with field=form.scheduled_at %}{% include 'components/field.html' with field=form.venue %}{% include 'components/field.html' with field=form.online_url %}<p>Only the applicant and authorised project mentor can view the invitation. It is delivered inside ResearchBridge.</p><div class="form-actions"><a href="{% url 'recruitment:detail' application.pk %}">Back to application</a><button class="button button-primary">Send meeting invitation</button></div></form>
+{% endblock %}

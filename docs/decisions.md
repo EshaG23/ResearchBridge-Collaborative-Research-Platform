@@ -27,7 +27,7 @@ Django, templates, CSS, JavaScript, SQLite, persistent private storage, in-app n
 5. College-authorised NDA wording and letterhead.
 6. Approved electronic-signing method and physical-copy verification process.
 7. Explicit selected-roster change policy.
-8. Student proposer access to detailed applicant résumés.
+8. Module 11 default: student proposers receive an overview only; private applications, résumés and meetings remain applicant/current-approved-mentor only.
 9. Final project-completion authority.
 10. File types/size limits and optional résumé-autofill fields.
 11. Whether multiple sprints may be active.

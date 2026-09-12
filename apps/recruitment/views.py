@@ -1,3 +1,6 @@
+import uuid
+from django.utils import timezone
+from django.db.models import Count,Q
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
@@ -11,7 +14,8 @@ from apps.projects.models import Project
 from apps.documents.security import private_download
 from .models import Application
 from .forms import ApplicationForm
-from .permissions import can_apply,can_view_application
+from .permissions import can_apply,can_view_application,can_review_applications,can_view_applicant_overview
+from .review_forms import ApplicantFilterForm
 from .services import prepare_application,submit_application
 
 @login_required
@@ -55,7 +59,8 @@ def detail(request,pk):
             messages.success(request,'Application submitted. Your résumé and details are preserved.')
             return redirect('recruitment:detail',pk=pk)
     return render(request,'recruitment/detail.html',{'page_title':'Your application' if app.applicant_id==request.user.pk else 'Application details',
-        'application':app,'error':error})
+        'application':app,'error':error,'is_reviewer':can_review_applications(request.user,app.project),
+        'review_key':uuid.uuid4(),'meetings':app.meetings.all(),'decisions':app.decisions.select_related('actor__profile'), 'now':timezone.now()})
 
 @login_required
 @never_cache
@@ -72,8 +77,31 @@ def index(request,project_pk=None):
     project=None
     if project_pk:
         project=get_object_or_404(Project,pk=project_pk)
-        require_permission(approved_teacher(request.user) and project.mentor_id==request.user.pk)
+        require_permission(can_view_applicant_overview(request.user,project))
         rows=project.applications.exclude(status='draft')
+        counts=rows.aggregate(total=Count('pk'),shortlisted=Count('pk',filter=Q(status='shortlisted')),
+            selected=Count('pk',filter=Q(status='selected')),not_selected=Count('pk',filter=Q(status='not_selected')))
+        form=ApplicantFilterForm(request.GET)
+        valid=form.is_valid()
+        if valid:
+            if form.cleaned_data['q']:
+                rows=rows.filter(snapshot__name__icontains=form.cleaned_data['q'])
+            if form.cleaned_data['status']:
+                rows=rows.filter(status=form.cleaned_data['status'])
+        else:
+            rows=rows.none()
+        # Proposer overview fetches only permitted fields; no phone/email/private statements.
+        rows=rows.order_by('-submitted_at','-pk').values('id','status','submitted_at','snapshot__name',
+            'snapshot__department','snapshot__year','snapshot__skills','snapshot__availability')
+        page=Paginator(rows,12).get_page(request.GET.get('page'))
+        labels=dict(Application._meta.get_field('status').choices)
+        for row in page:
+            row['status_label']=labels[row['status']]
+        query=request.GET.copy();query.pop('page',None)
+        return render(request,'recruitment/manage.html',{'page_title':'Applicant management','project':project,
+            'page':page,'counts':counts,'is_reviewer':can_review_applications(request.user,project),
+            'filter_form':form,'filters_valid':valid,'extra_query':query.urlencode()+'&' if query else ''})
+
     else:
         rows=Application.objects.filter(applicant=request.user)
     return render(request,'recruitment/index.html',{'page_title':'Project applications' if project else 'My applications',

@@ -7,6 +7,7 @@ class Notification(models.Model):
     title = models.CharField(max_length=160)
     message = models.CharField(max_length=500, blank=True)
     project = models.ForeignKey('projects.Project', null=True, blank=True, on_delete=models.SET_NULL)
+    application = models.ForeignKey('recruitment.Application', null=True, blank=True, on_delete=models.SET_NULL)
     created_at = models.DateTimeField(auto_now_add=True)
     read_at = models.DateTimeField(null=True, blank=True)
     class Meta:
