@@ -1,3 +1,6 @@
+from io import BytesIO
+from django.http import FileResponse
+from .letter_pdf import render_letter
 from django import forms
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -54,4 +57,11 @@ def detail(request,pk):
 def download(request,pk):
     letter=get_object_or_404(OfferLetter.objects.select_related('application__project'),pk=pk)
     require_permission(can_view_application(request.user,letter.application))
+    if request.GET.get('design')=='studio':
+        response=FileResponse(BytesIO(render_letter(letter.snapshot)),as_attachment=True,
+            filename=f'ResearchBridge-offer-{letter.pk}-styled.pdf',content_type='application/pdf')
+        response['Cache-Control']='private, no-store'
+        response['X-Content-Type-Options']='nosniff'
+        response['Content-Security-Policy']='sandbox'
+        return response
     return private_download(letter.pdf,f'ResearchBridge-offer-{letter.pk}.pdf')

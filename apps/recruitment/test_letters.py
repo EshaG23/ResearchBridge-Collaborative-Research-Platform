@@ -113,3 +113,20 @@ class OfferLetterTests(TestCase):
         self.assertEqual(client.get(url).status_code,200)
         self.assertFalse(OfferLetter.objects.exists())
         self.assertEqual(client.post(url,{'role':'Research assistant'}).status_code,403)
+
+    def test_styled_copy_preserves_original_and_is_private(self):
+        snapshot,token=self.selected()
+        letter=issue_letter(self.teacher,self.app.pk,token)
+        original=Path(letter.pdf.path).read_bytes()
+        url=reverse('recruitment:letter-download',args=[letter.pk])+'?design=studio'
+        self.client.force_login(self.student)
+        response=self.client.get(url)
+        self.assertEqual(response.status_code,200)
+        self.assertIn('no-store',response['Cache-Control'])
+        data=b''.join(response.streaming_content);response.close()
+        text=' '.join(p.extract_text() for p in PdfReader(BytesIO(data)).pages)
+        for key in ('student','project','role','mentor','reference','date'):
+            self.assertIn(snapshot[key],text)
+        self.assertEqual(Path(letter.pdf.path).read_bytes(),original)
+        self.client.force_login(self.other)
+        self.assertEqual(self.client.get(url).status_code,404)
