@@ -20,8 +20,8 @@ def can_manage_project(user, project):
     return project.creator_id == user.pk or (project.mentor_id == user.pk and approved_teacher(user))
 
 def can_view_confidential(user, project):
-    # Extend only with actual NDA-qualified community membership in its module.
-    return can_manage_project(user, project)
+    from apps.communities.permissions import can_enter
+    return can_manage_project(user, project) or can_enter(user, project)
 
 def can_view_project(user, project):
     if not college_member(user):

@@ -21,7 +21,9 @@ def index(request):
     scope = Q(creator=request.user)
     if not created and approved_teacher(request.user):
         scope |= Q(mentor=request.user)
-    records = Project.objects.filter(scope) if can_create_idea(request.user) else Project.objects.none()
+    if not created:
+        scope |= Q(community__memberships__user=request.user,community__memberships__role='student')
+    records = Project.objects.filter(scope).distinct() if can_create_idea(request.user) else Project.objects.none()
     records = records.select_related('domain','creator__profile','mentor__profile').prefetch_related('skills','departments')
     return render(request, 'projects/index.html', {'page_title':'Created Ideas' if created else 'My Projects',
         'created_view':created, 'page':Paginator(records,12).get_page(request.GET.get('page')), 'can_create':can_create_idea(request.user)})
@@ -59,9 +61,11 @@ def detail(request, pk):
     mentor_request = MentorRequest.objects.filter(search__project=project, teacher=request.user, state='pending').first() if approved_teacher(request.user) else None
     from apps.agreements.permissions import eligible_student
     has_agreement_access=eligible_student(request.user,project)
+    from apps.communities.permissions import can_enter
+    community_access=can_enter(request.user,project)
     # Never load the confidential relation on the recruitment page.
     return render(request,'projects/detail.html',{'page_title':'Project overview','project':project,
-        'can_manage':can_manage_project(request.user,project), 'has_agreement_access':has_agreement_access,
+        'can_manage':can_manage_project(request.user,project), 'has_agreement_access':has_agreement_access, 'community_access':community_access,
         'can_private':can_view_confidential(request.user,project), 'mentor_request':mentor_request, 'can_apply':can_apply(request.user,project), 'application':application, 'can_review_applications':can_view_applicant_overview(request.user,project)})
 
 @login_required
@@ -71,7 +75,7 @@ def private(request, pk):
     project = get_object_or_404(Project,pk=pk)
     require_permission(can_view_confidential(request.user,project))
     return render(request,'projects/private.html',{'page_title':'Confidential idea','project':project,
-        'details':project.confidential.details, 'documents':project.documents.prefetch_related('versions__uploader').all()})
+        'can_manage':can_manage_project(request.user,project), 'details':project.confidential.details, 'documents':project.documents.prefetch_related('versions__uploader').all()})
 
 
 

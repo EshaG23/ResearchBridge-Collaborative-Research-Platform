@@ -77,3 +77,6 @@ Module 12 completed: private, immutable offer letters with mentor preview, PDF d
 
 
 Module 13 completed: drawn/typed/physical agreement signing, immutable evidence PDFs, mentor verification, correction history and intended-team readiness checklist. See docs/module-13.md.
+
+
+Module 14 completed: mentor-created private community, all-student agreement gate, explicit admission, leader appointment, protected five-section landing page and history. See docs/module-14.md.
