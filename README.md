@@ -80,3 +80,6 @@ Module 13 completed: drawn/typed/physical agreement signing, immutable evidence 
 
 
 Module 14 completed: mentor-created private community, all-student agreement gate, explicit admission, leader appointment, protected five-section landing page and history. See docs/module-14.md.
+
+
+Module 15 completed: editable research summary, custom sections, private PDF/PPTX/reference library, sprint planning/status board and recorded edit history. See docs/module-15.md.

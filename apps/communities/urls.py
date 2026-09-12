@@ -1,4 +1,4 @@
 from django.urls import path
-from . import views
+from . import views,summary_views
 app_name='communities'
-urlpatterns=[path('projects/<uuid:pk>/create/',views.create,name='create'),path('<uuid:pk>/',views.detail,name='detail'),path('<uuid:pk>/leader/',views.leader,name='leader'),path('<uuid:pk>/<str:section>/',views.section,name='section')]
+urlpatterns=[path('<uuid:pk>/summary/',summary_views.summary,name='summary'),path('<uuid:pk>/todo/',summary_views.sprints,name='sprints'),path('<uuid:pk>/edit/<str:kind>/',summary_views.edit,name='edit'),path('<uuid:pk>/sections/<int:record_pk>/edit/',summary_views.edit,{'kind':'section'},name='edit-section'),path('<uuid:pk>/sprints/<uuid:record_pk>/edit/',summary_views.edit,{'kind':'sprint'},name='edit-sprint'),path('<uuid:pk>/resources/add/',summary_views.resource,name='resource'),path('<uuid:pk>/resources/<uuid:resource_pk>/download/',summary_views.download,name='resource-download'),path('projects/<uuid:pk>/create/',views.create,name='create'),path('<uuid:pk>/',views.detail,name='detail'),path('<uuid:pk>/leader/',views.leader,name='leader'),path('<uuid:pk>/<str:section>/',views.section,name='section')]

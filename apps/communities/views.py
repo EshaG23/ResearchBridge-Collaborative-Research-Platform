@@ -36,11 +36,13 @@ def accessible(request,pk):
 @require_GET
 def detail(request,pk):
     community=accessible(request,pk)
+    from .summary_views import workspace_context
+    progress=workspace_context(community)
     members=list(community.memberships.filter(role='student').select_related('user__profile'))
     for m in members:m.has_access=can_enter(m.user,community.project)
     return render(request,'communities/detail.html',{'page_title':'Private project community','community':community,'members':members,
         'is_mentor':can_review_applications(request.user,community.project),'leader_active':bool(community.leader and can_enter(community.leader,community.project)),
-        'key':uuid.uuid4(),'events':community.events.select_related('actor__profile')[:30]})
+        **progress,'key':uuid.uuid4(),'events':community.events.select_related('actor__profile')[:30]})
 
 @login_required
 @never_cache
