@@ -3,6 +3,24 @@ from django.conf import settings
 from django.db import models
 from django.core.validators import URLValidator
 
+def letter_path(instance, filename):
+    return f'letters/{instance.application_id}/{instance.pk}.pdf'
+
+class OfferLetter(models.Model):
+    id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
+    application=models.OneToOneField('Application',on_delete=models.PROTECT,related_name='offer_letter')
+    issued_by=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    issued_at=models.DateTimeField()
+    snapshot=models.JSONField()
+    pdf=models.FileField(upload_to=letter_path)
+    sha256=models.CharField(max_length=64)
+
+    def save(self,*args,**kwargs):
+        if not self._state.adding:
+            from django.core.exceptions import ValidationError
+            raise ValidationError('Issued offer letters cannot be edited.')
+        return super().save(*args,**kwargs)
+
 def application_path(instance,filename):
     return f'applications/{instance.applicant_id}/{uuid.uuid4().hex}.pdf'
 

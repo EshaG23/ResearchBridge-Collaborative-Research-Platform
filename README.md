@@ -71,3 +71,6 @@ Optional local administration: run `manage.py createsuperuser` using that Python
 
 Do not delete `private/` to reset or restart the app. It contains persistent local data and the development signing secret. Do not commit it or upload it with source code.
 
+
+
+Module 12 completed: private, immutable offer letters with mentor preview, PDF downloads and in-app notification. See docs/module-12.md. Agreement signing follows in Module 13.
