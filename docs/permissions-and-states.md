@@ -30,3 +30,6 @@ Check permissions server-side for pages, writes, downloads, polling, search, not
 - IP: teacher-authored updates with flexible statuses. Prepared, submitted, and granted remain distinct. Only deliberately approved shareable achievements leave the community.
 
 Exactly five primary community pages: Summary, Internal Chat, To-do, Announcements, IP Progress. History/document links are contextual, not a sixth primary card.
+
+
+Agreements: only the recipient and current approved project mentor can read signed evidence. Submitted evidence is pending; mentor verification completes it. Correction requests invalidate readiness until a replacement is verified. All selected students plus explicitly enrolled student proposers are retained in the agreement gate. No community/private membership is created by signing.

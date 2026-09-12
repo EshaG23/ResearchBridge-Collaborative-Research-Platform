@@ -72,7 +72,7 @@ class OfferLetterTests(TestCase):
         detail=reverse('recruitment:letter',args=[letter.pk]);download=reverse('recruitment:letter-download',args=[letter.pk])
         for user in (self.student,self.teacher):
             self.client.force_login(user)
-            self.assertContains(self.client.get(detail),'Confidentiality agreement pending')
+            self.assertContains(self.client.get(detail),'Open agreement')
             response=self.client.get(download)
             self.assertEqual(response.status_code,200)
             self.assertIn('no-store',response['Cache-Control'])

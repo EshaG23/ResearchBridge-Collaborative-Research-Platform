@@ -74,3 +74,6 @@ Do not delete `private/` to reset or restart the app. It contains persistent loc
 
 
 Module 12 completed: private, immutable offer letters with mentor preview, PDF downloads and in-app notification. See docs/module-12.md. Agreement signing follows in Module 13.
+
+
+Module 13 completed: drawn/typed/physical agreement signing, immutable evidence PDFs, mentor verification, correction history and intended-team readiness checklist. See docs/module-13.md.
