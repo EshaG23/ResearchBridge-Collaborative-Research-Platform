@@ -21,7 +21,7 @@ Python 3.13 is installed on the current machine. From this project directory, th
 
 ```
 
-Open http://127.0.0.1:8000/. The root opens sign-in. Use demo.student@rbunagpur.in with initial password ResearchDemo!2026, then complete the mandatory profile. OTP 123456 is now only for local Forgot Password. Review the local interface at http://127.0.0.1:8000/dev/ui/ and shared components at http://127.0.0.1:8000/dev/ui/components/. These previews are disabled in production and contain no real research data.
+Open http://127.0.0.1:8000/. The root opens sign-in. Use student1@rbunagpur.in with initial password ResearchDemo!2026, then complete the mandatory profile. OTP 123456 is now only for local Forgot Password. Review the local interface at http://127.0.0.1:8000/dev/ui/ and shared components at http://127.0.0.1:8000/dev/ui/components/. These previews are disabled in production and contain no real research data.
 
 For a fresh checkout:
 
@@ -92,3 +92,10 @@ Module 17 completed: task assignment, progress and blockers, private evidence fi
 
 
 Module 18 completed: private filtered history, explicit document version chains, preserved comments/reviews and contribution views. Also added the requested Module 17 checklist/Completed view and persistent dashboard chat unread counts. All 149 regression tests passed. See docs/module-18.md.
+
+
+## Latest release
+
+Module 19 adds completion, private IP progress and mentor-approved shared achievements. Module 20 adds connected verification, backup/restore tools and local launch scripts. Public hosting and real SMTP delivery still require external configuration; see docs/module-20.md.
+
+In CMD, run `start-demo.cmd` from this folder, then open http://127.0.0.1:8000/accounts/login/. See demo_rosters/README.md for the 5 student and 5 teacher accounts. All initial passwords are `ResearchDemo!2026`; profiles must be completed after login.

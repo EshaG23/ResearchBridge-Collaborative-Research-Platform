@@ -52,13 +52,14 @@ def vote(user,pk,poll_id,option_id):
     if poll.closed:raise ValidationError('This poll is closed.')
     option=PollOption.objects.filter(pk=option_id,poll=poll).first();require_permission(option is not None)
     PollVote.objects.update_or_create(poll=poll,voter=user,defaults={'option':option})
+    poll.revision+=1;poll.save(update_fields=['revision'])
     return poll
 
 @transaction.atomic
-def close_poll(user,pk,poll_id):
+def close_poll(user,pk,poll_id,closed=True):
     c=lock(user,pk);poll=Poll.objects.select_related('message').filter(pk=poll_id,message__community=c).first();require_permission(poll is not None)
     require_permission(poll.message.sender_id==user.pk or can_edit(user,c.project))
-    poll.closed=True;poll.save(update_fields=['closed']);return poll
+    poll.closed=closed;poll.revision+=1;poll.save(update_fields=['closed','revision']);return poll
 
 @transaction.atomic
 def announce(user,pk,key,title,body,record_id=None,revision=0):

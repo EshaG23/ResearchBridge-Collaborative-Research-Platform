@@ -1,3 +1,9 @@
+# Current release status (13 September 2026)
+
+Module 19 is implemented. Module 20 local release, connected tests, backup/restore and deployment preparation are implemented; actual public hosting and real SMTP delivery remain external setup steps. See module-19.md and module-20.md. The fresh demo has 5 students and 5 teachers with incomplete profiles.
+
+The entries below are historical milestones; their old pending-module descriptions reflect their original dates.
+
 # Implementation status
 
 ## Module 1 — completed

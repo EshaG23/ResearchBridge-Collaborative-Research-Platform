@@ -31,6 +31,8 @@ def save_idea(user, form, action, project=None):
         record.status = Project.Status.RECRUITING if record.mentor_id else Project.Status.PENDING
     record.save()
     form.save_m2m()
+    from apps.notifications.services import notify_departments
+    notify_departments(record)
     ConfidentialIdea.objects.update_or_create(project=record, defaults={'details':form.cleaned_data['confidential_details']})
     notify(user, f'idea:{record.pk}:saved:{record.revision}', 'Idea saved',
            'Your idea and recruitment details have been saved.', record)

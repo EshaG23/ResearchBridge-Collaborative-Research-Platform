@@ -72,11 +72,14 @@ EMAIL_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('SMTP_PORT', '587'))
 EMAIL_HOST_USER = os.environ.get('SMTP_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('SMTP_PASSWORD', '')
-EMAIL_USE_TLS = True
+EMAIL_USE_SSL = os.environ.get('SMTP_USE_SSL','0') == '1'
+EMAIL_USE_TLS = not EMAIL_USE_SSL and os.environ.get('SMTP_USE_TLS','1') == '1'
 EMAIL_TIMEOUT = 15
-DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+DEFAULT_FROM_EMAIL = os.environ.get('SMTP_FROM',EMAIL_HOST_USER)
 if AUTHENTICATION_MODE == 'real':
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 FILE_UPLOAD_MAX_MEMORY_SIZE = 1024 * 1024
 DATA_UPLOAD_MAX_MEMORY_SIZE = 6 * 1024 * 1024
 
+
+ACHIEVEMENT_DAYS = max(1,int(os.environ.get('ACHIEVEMENT_DAYS','365')))

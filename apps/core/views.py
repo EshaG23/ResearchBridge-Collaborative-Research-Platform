@@ -24,6 +24,17 @@ def dashboard(request):
     from apps.core.permissions import can_create_idea, college_member, require_permission
     require_permission(college_member(request.user), conceal=False)
     from apps.collaboration.views import unread_context
+    from apps.ip_progress.views import approved_achievements
     return render(request, 'core/dashboard.html', discovery_context(request) | unread_context(request.user) | {
-        'page_title': 'Your workspace', 'profile': request.user.profile,
+        'achievements':approved_achievements(request.user),'page_title': 'Your workspace', 'profile': request.user.profile,
         'can_create': can_create_idea(request.user)})
+
+@require_GET
+@never_cache
+def health(request):
+    from django.db import connection,DatabaseError
+    from django.http import JsonResponse
+    try:
+        with connection.cursor() as cursor:cursor.execute('SELECT 1')
+    except DatabaseError:return JsonResponse({'status':'unavailable'},status=503)
+    return JsonResponse({'status':'ok'})

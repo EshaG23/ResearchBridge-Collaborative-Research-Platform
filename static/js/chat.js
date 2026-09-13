@@ -54,7 +54,7 @@
      const ids=Array.from(timeline.querySelectorAll('[data-poll]')).slice(-100).map(e=>e.dataset.poll).join(',');
      const data=await responseJSON(await timedFetch(app.dataset.feed+'?after='+cursor+'&polls='+ids,{cache:'no-store'}));const follow=nearBottom();
      data.messages.forEach(m=>{insert(m);cursor=Math.max(cursor,m.id);});
-     Object.entries(data.polls).forEach(([id,html])=>{const node=timeline.querySelector(`[data-poll="${id}"]`);if(node&&!node.contains(document.activeElement))node.outerHTML=html;});
+     Object.entries(data.polls).forEach(([id,html])=>{const node=timeline.querySelector(`[data-poll="${id}"]`);if(node&&!node.contains(document.activeElement)&&node.dataset.pending!=='1'&&node.dataset.dirty!=='1'){const t=document.createElement('template');t.innerHTML=html;if(Number(t.content.firstElementChild.dataset.revision)>=Number(node.dataset.revision))node.outerHTML=html;}});
      if(data.messages.length){if(follow)bottom();else newButton.hidden=false;}
      connection.textContent='Connected · updates every 3 seconds';markRead();
      timer=setTimeout(poll,data.messages.length===40?100:3000);
@@ -83,10 +83,15 @@
    finally{sending=false;Array.from(form.elements).forEach(el=>el.disabled=!!pending);sendButton.disabled=false;sendButton.textContent=pending?'Retry message':'Send message';if(stopped)form.hidden=true;}
  });
  text.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();form.requestSubmit();}});
- timeline.addEventListener('submit',async e=>{const vote=e.target.closest('.poll-form');if(!vote)return;e.preventDefault();const button=e.submitter;if(!button)return;
-   const data=new FormData(vote);data.set(button.name,button.value);vote.querySelectorAll('button').forEach(b=>b.disabled=true);
-   try{const result=await postJSON(vote.action,data);vote.closest('[data-poll]').outerHTML=result.poll;}
-   catch(e){showError(e.message);vote.querySelectorAll('button').forEach(b=>b.disabled=false);}
+ timeline.addEventListener('change',e=>{if(e.target.matches('.poll-form input[type=radio]')){const poll=e.target.closest('[data-poll]');poll.dataset.dirty='1';poll.querySelector('.poll-feedback').textContent='New choice selected. Click Save vote to confirm.';}});
+ timeline.addEventListener('submit',async e=>{
+   const vote=e.target.closest('.poll-form');if(!vote)return;e.preventDefault();const button=e.submitter;if(!button)return;
+   const node=vote.closest('[data-poll]');if(node.dataset.pending==='1')return;
+   const data=new FormData(vote);data.set('action',button.value);
+   if(button.value==='vote'&&!data.get('option')){vote.querySelector('.poll-feedback').textContent='Select an option first.';return;}
+   node.dataset.pending='1';Array.from(vote.elements).forEach(b=>b.disabled=true);vote.querySelector('.poll-feedback').textContent='Saving…';
+   try{const result=await postJSON(vote.getAttribute('action'),data);const t=document.createElement('template');t.innerHTML=result.poll;const fresh=t.content.firstElementChild;fresh.querySelector('.poll-feedback').textContent=button.value==='vote'?'Your vote was saved.':button.value==='reopen'?'Voting reopened.':'Voting closed.';node.replaceWith(fresh);}
+   catch(e){showError(e.message);node.dataset.pending='0';Array.from(vote.elements).forEach(b=>b.disabled=false);vote.querySelector('.poll-feedback').textContent='Could not save. Please retry.';}
  });
  const recordButton=document.getElementById('record-audio'),recordStatus=document.getElementById('record-status');
  if(!navigator.mediaDevices?.getUserMedia||!window.MediaRecorder){recordButton.hidden=true;}

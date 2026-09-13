@@ -1,14 +1,16 @@
 from django.contrib import admin
 from django.urls import include, path
 from django.views.generic import RedirectView
-from apps.core.views import dashboard
+from apps.core.views import dashboard,health
 
 urlpatterns = [
+    path("health/", health, name="health"),
     path("", RedirectView.as_view(pattern_name="accounts:login", permanent=False)),
     path("accounts/", include("apps.accounts.urls")),
     path("dashboard/", dashboard, name="dashboard"),
     path("profile/", include("apps.profiles.urls")),
     path("mentorship/", include("apps.mentorship.urls")),
+    path("communities/", include("apps.ip_progress.urls")),
     path("communities/", include("apps.tasks.urls")),
     path("communities/", include("apps.collaboration.urls")),
     path("communities/", include("apps.communities.urls")),

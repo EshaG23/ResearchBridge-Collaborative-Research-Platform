@@ -89,7 +89,8 @@ def poll_action(request,pk,poll_id):
     if request.headers.get('X-Chat-User') not in (None,str(request.user.pk)):
         return JsonResponse({'error':'The signed-in account changed in another tab. Reload this chat before continuing.','code':'account_changed'},status=409)
     try:
-        poll=close_poll(request.user,pk,poll_id) if request.POST.get('action')=='close' else vote(request.user,pk,poll_id,number(request.POST.get('option')))
+        action=request.POST.get('action','vote')
+        poll=close_poll(request.user,pk,poll_id,closed=action=='close') if action in ('close','reopen') else vote(request.user,pk,poll_id,number(request.POST.get('option')))
         return JsonResponse({'poll':render_to_string('collaboration/poll.html',poll_context(poll,request.user),request=request)})
     except ValidationError as exc:return JsonResponse({'error':' '.join(exc.messages)},status=400)
     except DatabaseError:return JsonResponse({'error':'Vote could not be saved. Please retry.'},status=503)

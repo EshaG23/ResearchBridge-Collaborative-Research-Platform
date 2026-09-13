@@ -158,3 +158,18 @@ class ChatTests(TestCase):
         response=self.client.post(reverse('collaboration:poll',args=[c.pk,m.poll.pk]),{'option':m.poll.options.first().pk},**headers)
         self.assertEqual(response.status_code,409);self.assertFalse(PollVote.objects.exists())
         self.assertEqual(ChatMessage.objects.count(),1)
+
+    def test_vote_changes_reopen_and_revision_order(self):
+        c=self.open();m=send(self.teacher,c.pk,uuid.uuid4(),question='Meeting day?',options=['Monday','Tuesday'])
+        a,b=list(m.poll.options.all());self.client.force_login(self.student)
+        url=reverse('collaboration:poll',args=[c.pk,m.poll.pk])
+        for option in [a,b,a,b]:
+            response=self.client.post(url,{'action':'vote','option':option.pk},HTTP_X_CHAT_USER=str(self.student.pk))
+            self.assertEqual(response.status_code,200);self.assertIn('Your saved vote',response.json()['poll'])
+            self.assertEqual(PollVote.objects.get(poll=m.poll,voter=self.student).option_id,option.pk)
+        m.poll.refresh_from_db();self.assertEqual(m.poll.revision,5)
+        self.client.force_login(self.teacher);self.assertEqual(self.client.post(url,{'action':'close'}).status_code,200)
+        self.client.force_login(self.student);self.assertEqual(self.client.post(url,{'action':'reopen'}).status_code,404)
+        self.assertEqual(self.client.post(url,{'action':'vote','option':a.pk}).status_code,400)
+        self.client.force_login(self.teacher);self.assertEqual(self.client.post(url,{'action':'reopen'}).status_code,200)
+        self.client.force_login(self.student);self.assertEqual(self.client.post(url,{'action':'vote','option':a.pk}).status_code,200)

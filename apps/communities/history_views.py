@@ -52,7 +52,12 @@ def activity(c,files):
     tasks={str(t.pk):t for t in c.tasks.all()}
     for e in c.events.select_related('actor__profile'):
         d=e.details;task=tasks.get(d.get('task_id'));sprint=d.get('sprint_id','') or (str(task.sprint_id) if task and task.sprint_id else '')
-        title=e.description;detail=''
+        title={'outcome_request':'Completion requested','outcome_complete':'Project completion confirmed','outcome_reopen':'Project reopened','outcome_ip':'Private IP progress updated','outcome_achievement':'Shareable achievement approved','outcome_withdraw':'Shared achievement withdrawn'}.get(e.action,e.description);detail=''
+        changes=[]
+        for field in ['title','status','assignee_id','due_date','start_date','end_date']:
+            before=d.get('before',{});after=d.get('after',{})
+            if field in after and before.get(field)!=after[field]:changes.append(field.replace('_',' ')+': '+str(before.get(field) or 'not set')+' → '+str(after[field] or 'not set'))
+        detail='; '.join(changes[:3])
         if e.action=='sprint_saved':
             after=d.get('after',{});before=d.get('before',{});sprint=d.get('record_id','')
             title='Sprint '+('started' if after.get('status')=='active' and before.get('status')!='active' else 'completed' if after.get('status')=='completed' and before.get('status')!='completed' else 'saved')
@@ -60,7 +65,8 @@ def activity(c,files):
         if e.action=='task_work':detail=('Blocker resolved. ' if d.get('previous_blocker') and not d.get('blocker') else 'Blocker reported. ' if d.get('blocker') else '')+d.get('summary','')
         if e.action=='task_review':detail=d.get('decision','')+': '+d.get('feedback','')
         if e.action=='task_reopen':detail=d.get('reason','')
-        add(e.created_at,e.actor,title+(': '+task.title if task else ''),'task' if task else 'workspace',reverse('tasks:detail',args=[c.pk,task.pk]) if task else '',e.actor_name,sprint,detail)
+        if e.action.startswith('outcome_'):detail=d.get('title','')+' '+d.get('status','')+' '+d.get('note','')
+        add(e.created_at,e.actor,title+(': '+d.get('title',task.title) if task else ''),'task' if task else 'workspace',reverse('tasks:detail',args=[c.pk,task.pk]) if task else '',e.actor_name,sprint,detail)
     for f in files:rows.append({'time':f['time'],'user':f['user'],'actor':f['actor'],'title':('New document version' if f['version']>1 else 'File / reference added')+': '+f['name']+' · v'+str(f['version']),'kind':'file','url':f['url'],'sprint':f['sprint'],'detail':f['note']})
     return sorted(rows,key=lambda r:r['time'],reverse=True)
 

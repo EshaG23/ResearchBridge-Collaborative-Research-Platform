@@ -1,23 +1,32 @@
 # Operations and persistence
 
-## Local data
+Local demo data lives in private/demo: SQLite database, private uploads and persistent development secret. Startup never resets data. Keep private data, secrets and backups out of source control and public static hosting.
 
-The local settings create `private/` and `private/uploads/` if absent. Migrations create/update `private/db.sqlite3`; startup does not reset it or seed demo records. The ignored development secret persists across restarts. Uploaded content has no public URL mapping.
+## Running from CMD
 
-Never put the database, signed agreements, real files, SMTP credentials, OTP secrets, or `.development-secret` into source control. Production secret values should be entered through the host environment, not pasted into chat or tracked files.
+From the project folder, run:
 
-## Backup and restore procedure
+```bat
+start-demo.cmd
+```
 
-For the small SQLite demonstration, stop the web server and other writers before copying data. Back up the entire `private/` directory (or the configured persistent data directory) to a separate protected location. This keeps the SQLite database and uploaded files from the same stopped state. Keep source and migrations in Git separately. Back up production secrets through the host's private configuration process.
+For a fresh machine with Python installed, first run setup-demo.cmd to create the environment, install dependencies and migrate. Roster import is explicit; see demo_rosters/README.md. The .env.example file is a configuration reference; it is not automatically loaded.
 
-To restore, stop the server, preserve the current data directory as a recovery copy, restore the matching database and uploads into the configured location, install the pinned requirements and apply migrations for that source version, then verify record counts and representative authorised file downloads. Do not replace an active database. A complete database/file backup-and-restore demonstration remains a Module 20 check; uploads are not implemented in Module 1.
+## Backup and restore
 
-## Production preparation (not yet deployed)
+Stop all web servers and writers first. Use the Python interpreter from the project's virtual environment (or the existing ../../work/.venv on this laptop):
 
-Use `config.settings.production`. Configure `DJANGO_SECRET_KEY` (strong random value, at least 50 characters), `DJANGO_ALLOWED_HOSTS` (comma-separated exact hosts), and `RESEARCHBRIDGE_DATA_DIR` (existing writable persistent directory). Collect static assets with `manage.py collectstatic --noinput` using the selected settings. Never route the private upload directory as static/media content.
+```bat
+python manage.py backup_workspace private/backups/my-backup --writers-stopped
+python manage.py restore_workspace private/backups/my-backup private/restored-workspace
+```
 
-Production defaults require HTTPS and secure cookies. Determine trusted proxy settings from the host's documentation before deployment; incorrect proxy configuration may cause redirect loops. Run `check --deploy` against the actual production environment before launch.
+Choose new directory names. Backup verifies SQLite integrity and file SHA256 checksums; restore refuses to overwrite existing directories and verifies checksums. Keep copies outside the laptop too. To activate a restore, stop the server, archive the current private/demo directory, and move the restored directory to private/demo. Preserve source and migrations in Git separately. Never replace an active database.
 
-PythonAnywhere Free is only the proposed initial host. Storage, outgoing network/email limits, renewal requirements, and persistent-file behaviour must be checked at deployment time. No free hosting capability or email delivery has been verified yet. Keep local execution available regardless.
+The pre-reset demo backup is private/release-backups/before-reset-20260913-final. Its 11 files were restored and verified in a separate folder. The previous demo directory is also retained as private/demo-before-reset-20260913-final.
 
-Real OTP setup belongs to Module 3/20 as appropriate. The current dummy email backend sends no messages and no code is claimed to have been sent. Never enable a console backend for real OTP logging.
+## Production preparation: not deployed
+
+Use config.settings.production, a strong DJANGO_SECRET_KEY, exact DJANGO_ALLOWED_HOSTS, RESEARCHBRIDGE_AUTH_MODE=real and a persistent RESEARCHBRIDGE_DATA_DIR. Configure SMTP through environment variables listed in .env.example. Never publish private uploads or log real OTPs. Configure HTTPS, serve collected static assets, use a production WSGI/ASGI server, and run check --deploy against the actual environment. /health/ performs a database connectivity check without exposing configuration.
+
+Real SMTP credentials and a hosting destination have not been supplied. Actual delivery, HTTPS hosting and recovery on that host remain to be verified before public launch. Demo OTP 123456 is only for local demo mode.

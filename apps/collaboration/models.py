@@ -29,6 +29,7 @@ class ChatAttachment(models.Model):
     sha256=models.CharField(max_length=64)
 
 class Poll(models.Model):
+    revision=models.PositiveIntegerField(default=1)
     message=models.OneToOneField(ChatMessage,on_delete=models.PROTECT,related_name='poll')
     question=models.CharField(max_length=300)
     closed=models.BooleanField(default=False)
