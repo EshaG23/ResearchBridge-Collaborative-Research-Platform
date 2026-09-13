@@ -9,6 +9,7 @@ urlpatterns = [
     path("dashboard/", dashboard, name="dashboard"),
     path("profile/", include("apps.profiles.urls")),
     path("mentorship/", include("apps.mentorship.urls")),
+    path("communities/", include("apps.tasks.urls")),
     path("communities/", include("apps.collaboration.urls")),
     path("communities/", include("apps.communities.urls")),
     path("agreements/", include("apps.agreements.urls")),

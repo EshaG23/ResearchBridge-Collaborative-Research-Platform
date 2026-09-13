@@ -86,3 +86,6 @@ Module 15 completed: editable research summary, custom sections, private PDF/PPT
 
 
 Module 16 completed: private persistent team chat, replies, media library, protected audio/video/photo/document attachments, voice-note recording, polls and mentor/leader announcements. All 134 tests passed. See docs/module-16.md.
+
+
+Module 17 completed: task assignment, progress and blockers, private evidence files, numbered submissions, mentor/leader review, changes requested, reopening, task/file discussion and approved task totals. All 145 regression tests passed. See docs/module-17.md.

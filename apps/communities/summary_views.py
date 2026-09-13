@@ -16,10 +16,13 @@ from .summary_services import save_text,save_resource
 
 
 def workspace_context(community):
-    sprints=list(community.sprints.all())
+    from django.db.models import Count,Q
+    from apps.tasks.views import totals
+    sprints=list(community.sprints.annotate(task_total=Count('tasks'),task_approved=Count('tasks',filter=Q(tasks__status='approved'))))
+    for sprint in sprints:sprint.task_percent=round(100*sprint.task_approved/sprint.task_total) if sprint.task_total else 0
     completed=[s for s in sprints if s.status=='completed'];active=next((s for s in sprints if s.status=='active'),None)
     planned=[s for s in sprints if s.status=='planned']
-    return {'sprints':sprints,'completed':completed,'active_sprint':active,'planned':planned,
+    return {'task_stats':totals(community.tasks.all()),'sprints':sprints,'completed':completed,'active_sprint':active,'planned':planned,
         'next_sprint':planned[0] if planned else None,'sprint_total':len(sprints),'sprint_done':len(completed),
         'sprint_percent':round(100*len(completed)/len(sprints)) if sprints else 0}
 
