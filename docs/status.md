@@ -137,3 +137,6 @@ Module 14 completed: mentor-created private community, all-student agreement gat
 
 
 Module 15 completed: editable research summary, custom sections, private PDF/PPTX/reference library, sprint planning/status board and recorded edit history. See docs/module-15.md.
+
+
+Module 16 completed: private persistent team chat, replies, media library, protected audio/video/photo/document attachments, voice-note recording, polls and mentor/leader announcements. All 134 tests passed. See docs/module-16.md.
