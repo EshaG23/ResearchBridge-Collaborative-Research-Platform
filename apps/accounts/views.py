@@ -133,3 +133,13 @@ def sign_out(request):
     logout(request)
     messages.success(request,'You have signed out. Your saved work is retained.')
     return redirect('accounts:login')
+
+
+@never_cache
+@require_http_methods(['GET'])
+def new_demo_session(request):
+    from django.conf import settings
+    from django.http import Http404, HttpResponseRedirect
+    if not settings.DEBUG or not demo_mode():
+        raise Http404
+    return HttpResponseRedirect('/demo/' + secrets.token_hex(16) + '/accounts/login/')

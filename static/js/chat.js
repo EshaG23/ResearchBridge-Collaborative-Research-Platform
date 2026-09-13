@@ -15,7 +15,7 @@
    if(response.redirected||[401,404].includes(response.status)){revoke();throw new Error('Please reload and sign in with an authorised account.');}
    const type=response.headers.get('content-type')||'';
    if(!type.includes('application/json'))throw new Error('The server could not handle this request. Your draft is kept; please retry.');
-   const data=await response.json();if(data.code==='account_changed'||(data.user_id&&data.user_id!==app.dataset.user)){const message='The signed-in account changed in another tab. Reload this chat to use the current account. For mentor and student testing together, use separate browser profiles or different browsers.';revoke(message);throw new Error(message);}if(data.csrf_token)csrf=data.csrf_token;if(!response.ok){const failure=new Error(data.error||'Request failed. Please retry.');failure.definite=response.status===400;throw failure;}return data;
+   const data=await response.json();if(data.code==='account_changed'||(data.user_id&&data.user_id!==app.dataset.user)){const message='The signed-in account changed in another tab. Reload this chat to use the current account. For side-by-side demo accounts, use Open another account in the demo banner.';revoke(message);throw new Error(message);}if(data.csrf_token)csrf=data.csrf_token;if(!response.ok){const failure=new Error(data.error||'Request failed. Please retry.');failure.definite=response.status===400;throw failure;}return data;
  }
  // Recover a rotated CSRF token once; keep the page's original account identity.
  async function timedFetch(url,options={}){

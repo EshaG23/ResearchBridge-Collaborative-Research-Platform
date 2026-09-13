@@ -29,7 +29,7 @@
       </form>
       <p class="field-help"><a href="{% url 'accounts:forgot' %}">Forgot password?</a></p>
       <div class="auth-access-note"><p class="field-help">Accounts are provided through the university roster. There is no self-registration.</p></div>
-      {% if demo %}<div class="demo-access"><span class="demo-tag">LOCAL DEMO</span><div><strong>Use a registered demo account.</strong><p><b>student1@rbunagpur.in</b><br>Initial password: <b>ResearchDemo!2026</b><br>Fictional roster data. Reset OTPs are simulated locally.</p></div></div>{% endif %}
+      {% if demo %}<div class="demo-access"><span class="demo-tag">LOCAL DEMO</span><div><strong>Use a registered demo account.</strong><p><b>student1@rbunagpur.in</b><br>Initial password: <b>ResearchDemo!2026</b><br>Fictional roster data. Reset OTPs are simulated locally.<br><a href="{% url 'accounts:demo-session' %}" target="_blank" rel="noopener">Open another account in a new tab ↗</a><br>Each new account tab keeps its own login.</p></div></div>{% endif %}
       <div class="auth-reassurance">{% include 'components/icon.html' with name='shield' %}<p>Private research details are shared only with authorised project members.</p></div>
     {% endblock %}</section>
     <div class="auth-bottom-note">A shared space for your next big question.</div>

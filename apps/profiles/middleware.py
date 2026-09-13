@@ -6,11 +6,11 @@ class ProfileGateMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
     def __call__(self, request):
-        if request.user.is_authenticated and not request.user.roster_role and not request.path.startswith('/admin/'):
+        if request.user.is_authenticated and not request.user.roster_role and not request.path_info.startswith('/admin/'):
             logout(request)
             return redirect('accounts:login')
-        exempt = request.path.startswith(('/accounts/', '/profile/', '/admin/', '/static/'))
-        preview = settings.DEBUG and request.path.startswith('/dev/ui/')
+        exempt = request.path_info.startswith(('/accounts/', '/profile/', '/admin/', '/static/'))
+        preview = settings.DEBUG and request.path_info.startswith('/dev/ui/')
         if request.user.is_authenticated and not exempt and not preview:
             from .models import Profile
             if not Profile.objects.filter(user=request.user, completed_at__isnull=False).exists():
