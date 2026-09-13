@@ -16,7 +16,7 @@ from apps.recruitment.permissions import can_review_applications
 from apps.documents.security import private_download
 from .models import Agreement,AgreementEvidence
 from .forms import SigningForm
-from .permissions import eligible_student,can_view_agreement,agreement_gate
+from .permissions import eligible_student,can_view_agreement,agreement_gate,selected_application
 from .services import context,preview,submit,review,enroll_proposer
 from .pdf import agreement_pdf
 
@@ -26,7 +26,10 @@ from .pdf import agreement_pdf
 def project(request,pk):
     project=get_object_or_404(Project,pk=pk)
     mentor=can_review_applications(request.user,project)
-    require_permission(mentor or eligible_student(request.user,project))
+    selected=selected_application(project,request.user) if request.user.roster_role=='student' else None
+    require_permission(mentor or eligible_student(request.user,project) or selected is not None)
+    if selected is not None and not eligible_student(request.user,project):
+        return render(request,'agreements/pending.html',{'project':project,'application':selected,'page_title':'Agreement: awaiting offer letter'})
     data={'project':project,'is_mentor':mentor,'page_title':'Confidentiality agreements'}
     if mentor:data.update(agreement_gate(project))
     else:

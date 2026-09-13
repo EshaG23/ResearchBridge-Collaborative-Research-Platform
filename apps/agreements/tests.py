@@ -181,3 +181,15 @@ class AgreementTests(TestCase):
         self.assertTrue(agreement_gate(self.project)['ready'])
         response=self.client.get(reverse('agreements:download',args=[record.pk])+'?file=copy')
         self.assertEqual(response.status_code,200);response.close()
+
+
+    def test_selected_student_sees_pending_agreement_then_signing(self):
+        _,token=self.selected()
+        self.client.force_login(self.student)
+        page=self.client.get(reverse('recruitment:detail',args=[self.app.pk]))
+        self.assertContains(page,'Confidentiality agreement &amp; status')
+        url=reverse('agreements:project',args=[self.project.pk])
+        self.assertContains(self.client.get(url),'Waiting for offer letter')
+        self.assertEqual(self.client.get(reverse('agreements:sign',args=[self.project.pk])).status_code,404)
+        issue_letter(self.teacher,self.app.pk,token)
+        self.assertContains(self.client.get(url),'Read &amp; sign agreement')
