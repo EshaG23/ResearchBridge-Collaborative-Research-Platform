@@ -161,3 +161,38 @@ def announcement_edit(request,pk,record_id=None):
         except DatabaseError:form.add_error(None,'The announcement could not be saved. Please retry.')
         else:return redirect('collaboration:announcements',pk=pk)
     return render(request,'collaboration/announcement_form.html',{'community':c,'page_title':'Edit announcement' if record else 'New announcement','form':form})
+
+
+def unread_context(user):
+    from apps.communities.models import Community
+    from apps.communities.permissions import can_enter
+    from .models import ChatReadState
+    seen=dict(ChatReadState.objects.filter(user=user).values_list('community_id','last_message_id'))
+    chats=[]
+    for c in Community.objects.filter(Q(project__mentor=user)|Q(memberships__user=user)).select_related('project').distinct():
+        if not can_enter(user,c.project):continue
+        count=c.chat_messages.filter(pk__gt=seen.get(c.pk,0)).exclude(sender=user).count()
+        if count:chats.append({'community':c,'count':count})
+    return {'chat_unread':sum(c['count'] for c in chats),'unread_chats':chats}
+
+@login_required
+@never_cache
+@require_GET
+def unread(request):
+    return JsonResponse({'html':render_to_string('collaboration/unread.html',unread_context(request.user),request=request)})
+
+@login_required
+@never_cache
+@require_POST
+def mark_read(request,pk):
+    from django.db import transaction
+    from .services import lock
+    from .models import ChatReadState
+    with transaction.atomic():
+        c=lock(request.user,pk)
+        if request.headers.get('X-Chat-User')!=str(request.user.pk):return JsonResponse({'code':'account_changed'},status=409)
+        last=number(request.POST.get('last'))
+        if not c.chat_messages.filter(pk=last).exists():return JsonResponse({'error':'Message not found.'},status=400)
+        state,_=ChatReadState.objects.get_or_create(community=c,user=request.user)
+        if last>state.last_message_id:state.last_message_id=last;state.save(update_fields=['last_message_id'])
+    return JsonResponse({'ok':True})

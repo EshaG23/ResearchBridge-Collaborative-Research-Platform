@@ -36,7 +36,7 @@ def board(request,pk):
             raise Http404
         query=query.filter(sprint=selected)
     if term:query=query.filter(Q(title__icontains=term)|Q(description__icontains=term))
-    return render(request,'tasks/board.html',{'community':c,'page_title':'Tasks and review','stats':stats,'page':Paginator(query,24).get_page(request.GET.get('page')),'states':Task.STATES,'state':state,'mine':mine,'sprint_filter':sprint,'term':term,'can_edit':can_edit(request.user,c.project)})
+    return render(request,'tasks/board.html',{'community':c,'page_title':'Tasks and review','stats':stats,'page':Paginator(query.exclude(status='approved'),24).get_page(request.GET.get('page')),'completed_page':Paginator(query.filter(status='approved'),24).get_page(request.GET.get('completed_page')),'states':Task.STATES,'state':state,'mine':mine,'sprint_filter':sprint,'term':term,'can_edit':can_edit(request.user,c.project)})
 
 @login_required
 @never_cache

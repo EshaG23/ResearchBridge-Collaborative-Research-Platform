@@ -1,0 +1,1 @@
+(()=>{const card=document.getElementById('dashboard-chat');if(!card)return;async function refresh(){try{const r=await fetch(card.dataset.url,{cache:'no-store'});if(r.redirected||!r.ok){card.textContent='Sign in again to check new messages.';return;}const data=await r.json();card.innerHTML=data.html;}catch(e){}setTimeout(refresh,15000);}setTimeout(refresh,15000);})();

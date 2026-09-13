@@ -20,6 +20,7 @@ class Membership(models.Model):
         constraints=[models.UniqueConstraint(fields=['community','user'],name='unique_community_member')]
 
 class CommunityEvent(models.Model):
+    actor_name=models.CharField(max_length=120,blank=True)
     community=models.ForeignKey(Community,on_delete=models.PROTECT,related_name='events')
     actor=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
     action=models.CharField(max_length=40)
@@ -32,6 +33,7 @@ class CommunityEvent(models.Model):
         if not self._state.adding:
             from django.core.exceptions import ValidationError
             raise ValidationError('Community history is immutable.')
+        if not self.actor_name:self.actor_name=self.actor.profile.name
         return super().save(*args,**kwargs)
 
     @property
@@ -77,6 +79,11 @@ def resource_path(instance,filename):
     return f'community-resources/{instance.community_id}/{instance.pk}/{filename}'
 
 class SummaryResource(models.Model):
+    replaces=models.OneToOneField('self',on_delete=models.PROTECT,null=True,blank=True,related_name='next_version')
+    version=models.PositiveIntegerField(default=1)
+    revision_note=models.CharField(max_length=1000,blank=True)
+    uploader_name=models.CharField(max_length=120,blank=True)
+
     id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     community=models.ForeignKey(Community,on_delete=models.PROTECT,related_name='resources')
     title=models.CharField(max_length=160)

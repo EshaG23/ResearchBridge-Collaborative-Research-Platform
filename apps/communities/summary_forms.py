@@ -34,6 +34,13 @@ class SprintForm(EditFields,forms.ModelForm):
         return data
 
 class ResourceForm(EditFields):
+    replaces=forms.ModelChoiceField(queryset=SummaryResource.objects.none(),required=False,label='New version of existing resource (optional)')
+    revision_note=forms.CharField(max_length=1000,required=False)
+    def __init__(self,*args,community=None,**kwargs):
+        super().__init__(*args,**kwargs)
+        if community:self.fields['replaces'].queryset=community.resources.filter(next_version__isnull=True)
+        self.fields['replaces'].label_from_instance=lambda r:f'{r.title} - v{r.version}'
+
     title=forms.CharField(max_length=160)
     category=forms.ChoiceField(choices=SummaryResource._meta.get_field('category').choices)
     url=forms.URLField(max_length=500,required=False,validators=[URLValidator(schemes=['https'])],label='HTTPS reference link')

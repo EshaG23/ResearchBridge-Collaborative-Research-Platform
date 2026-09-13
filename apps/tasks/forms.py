@@ -31,17 +31,19 @@ class MultipleFiles(forms.FileField):
     def clean(self,data,initial=None):return [super(MultipleFiles,self).clean(f,initial) for f in (data if isinstance(data,(list,tuple)) else [data]) if f]
 
 class FileChoice(forms.ModelChoiceField):
-    def label_from_instance(self,obj):return f'{obj.filename} · {obj.created_at:%d %b %H:%M} · {str(obj.pk)[:8]}'
+    def label_from_instance(self,obj):return f'{obj.filename} · v{obj.version} · {obj.created_at:%d %b %H:%M} · {str(obj.pk)[:8]}'
 class EvidenceChoice(forms.ModelMultipleChoiceField):
     label_from_instance=FileChoice.label_from_instance
 
 class WorkForm(Confirmation):
+    replaces=FileChoice(queryset=TaskFile.objects.none(),required=False,label='Upload a new version of (optional)')
+    revision_note=forms.CharField(max_length=1000,required=False,label='Revision note')
     summary=forms.CharField(max_length=10000,widget=forms.Textarea(attrs={'rows':5}),label='Progress / completed work')
     blocker=forms.CharField(max_length=3000,required=False,widget=forms.Textarea(attrs={'rows':2}),label='Blocker (leave empty when resolved)')
     evidence=EvidenceChoice(queryset=TaskFile.objects.none(),required=False,widget=forms.CheckboxSelectMultiple,label='Existing files to include in this submission')
     uploads=MultipleFiles(required=False,label='New evidence files',help_text='Up to 5 files, 25 MB each, 60 MB total. New files are included automatically.')
     def __init__(self,*args,task,**kwargs):
-        super().__init__(*args,**kwargs);self.fields['evidence'].queryset=task.files.all()
+        super().__init__(*args,**kwargs);self.fields['evidence'].queryset=task.files.all();self.fields['replaces'].queryset=task.files.filter(next_version__isnull=True)
 
 class ReviewForm(Confirmation):
     submission=forms.IntegerField(widget=forms.HiddenInput)

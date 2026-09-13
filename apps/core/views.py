@@ -23,6 +23,7 @@ def dashboard(request):
     from apps.projects.discovery import discovery_context
     from apps.core.permissions import can_create_idea, college_member, require_permission
     require_permission(college_member(request.user), conceal=False)
-    return render(request, 'core/dashboard.html', discovery_context(request) | {
+    from apps.collaboration.views import unread_context
+    return render(request, 'core/dashboard.html', discovery_context(request) | unread_context(request.user) | {
         'page_title': 'Your workspace', 'profile': request.user.profile,
         'can_create': can_create_idea(request.user)})

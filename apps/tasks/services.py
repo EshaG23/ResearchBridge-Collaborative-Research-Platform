@@ -17,7 +17,7 @@ def check_revision(task,data):
     if task.revision!=data['revision']:raise ValidationError('This task changed in another window. Reload before saving.')
 
 def event(c,user,key,action,task,details=None):
-    return CommunityEvent.objects.create(community=c,actor=user,request_key=key,action=action,details={'task_id':str(task.pk),'title':task.title,**(details or {})})
+    return CommunityEvent.objects.create(community=c,actor=user,request_key=key,action=action,details={'task_id':str(task.pk),'title':task.title,'sprint_id':str(task.sprint_id) if task.sprint_id else '',**(details or {})})
 
 def replay(c,user,key,action,task_id=None):
     old=CommunityEvent.objects.filter(request_key=key).first()
@@ -64,12 +64,18 @@ def act(user,pk,task_id,action,data,uploads=()):
                 if len(uploads)>5 or sum(f.size for f in uploads)>60*1024*1024:raise ValidationError('Use up to 5 files, 25 MB each and 60 MB total.')
                 selected=list(data.get('evidence',[]))
                 require_permission(all(f.task_id==t.pk for f in selected))
+                previous=data.get('replaces')
+                if previous:
+                    require_permission(previous.task_id==t.pk)
+                    if len(uploads)!=1 or TaskFile.objects.filter(replaces=previous).exists():raise ValidationError('Choose the latest file version and upload exactly one replacement.')
+                    selected=[f for f in selected if f.pk!=previous.pk]
+                before_status=t.status;before_blocker=t.blocker
                 for upload in uploads:
                     name,kind,mime,raw=inspect_upload(upload)
-                    f=TaskFile(task=t,uploader=user,filename=name,mime=mime,size=len(raw),sha256=hashlib.sha256(raw).hexdigest())
+                    f=TaskFile(task=t,uploader=user,uploader_name=user.profile.name,replaces=previous,version=previous.version+1 if previous else 1,revision_note=data.get('revision_note',''),filename=name,mime=mime,size=len(raw),sha256=hashlib.sha256(raw).hexdigest())
                     f.file.save(str(uuid.uuid4())+name[name.rfind('.'):],ContentFile(raw),save=False);stored.append(f.file);f.save();selected.append(f)
                 t.progress_notes=data['summary'];t.blocker=data.get('blocker','')
-                details={'summary':t.progress_notes,'blocker':t.blocker,'files':[str(f.pk) for f in selected]}
+                details={'previous_status':before_status,'previous_blocker':before_blocker,'summary':t.progress_notes,'blocker':t.blocker,'files':[str(f.pk) for f in selected]}
                 if action=='work':t.status='progress' if t.status=='assigned' else t.status
                 else:
                     if t.blocker:raise ValidationError('Resolve or clear the blocker before submitting for approval.')

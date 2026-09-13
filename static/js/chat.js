@@ -7,6 +7,7 @@
  let csrf=form.querySelector('[name=csrfmiddlewaretoken]').value;
  const uuid=()=>crypto.randomUUID();key.value=uuid();
  const showError=msg=>{error.textContent=msg;error.hidden=false;};
+ let lastRead=0,reading=false;
  const nearBottom=()=>scroll.scrollHeight-scroll.scrollTop-scroll.clientHeight<100;
  const bottom=()=>{scroll.scrollTop=scroll.scrollHeight;newButton.hidden=true;};
  function revoke(message='Your session or community access changed. Reload or sign in again.'){stopped=true;clearTimeout(timer);clearTimeout(recordTimer);if(recording&&recording.state!=='inactive')recording.stop();if(stream)stream.getTracks().forEach(t=>t.stop());timeline.replaceChildren();form.hidden=true;connection.textContent='Access unavailable';showError(message);newButton.hidden=true;older.hidden=true;}
@@ -40,6 +41,13 @@
    const next=Array.from(timeline.children).find(el=>Number(el.dataset.message)>item.id);timeline.insertBefore(node,next||null);
    if(!oldest||item.id<oldest)oldest=item.id;document.getElementById('chat-empty').hidden=true;
  }
+ async function markRead(){
+   if(stopped||reading||document.visibilityState!=='visible'||!nearBottom())return;
+   const ids=Array.from(timeline.children).map(e=>Number(e.dataset.message)||0),last=Math.max(0,...ids);
+   if(last<=lastRead)return;reading=true;
+   try{const data=new FormData();data.set('last',last);await postJSON(app.dataset.read,data);lastRead=last;}catch(e){}finally{reading=false;}
+ }
+ scroll.addEventListener('scroll',markRead);document.addEventListener('visibilitychange',markRead);
  async function poll(){
    if(stopped||fetching)return;fetching=true;
    try{
@@ -48,7 +56,7 @@
      data.messages.forEach(m=>{insert(m);cursor=Math.max(cursor,m.id);});
      Object.entries(data.polls).forEach(([id,html])=>{const node=timeline.querySelector(`[data-poll="${id}"]`);if(node&&!node.contains(document.activeElement))node.outerHTML=html;});
      if(data.messages.length){if(follow)bottom();else newButton.hidden=false;}
-     connection.textContent='Connected · updates every 3 seconds';
+     connection.textContent='Connected · updates every 3 seconds';markRead();
      timer=setTimeout(poll,data.messages.length===40?100:3000);
    }catch(e){if(!stopped){connection.textContent='Reconnecting…';timer=setTimeout(poll,6000);}}
    finally{fetching=false;}

@@ -73,7 +73,7 @@ def edit(request,pk,kind,record_pk=None):
 @require_http_methods(['GET','POST'])
 def resource(request,pk):
     community=accessible(request,pk);require_permission(can_edit(request.user,community.project))
-    form=ResourceForm(request.POST or None,request.FILES or None,initial={'revision':community.revision})
+    form=ResourceForm(request.POST or None,request.FILES or None,community=community,initial={'revision':community.revision})
     if request.method=='POST' and form.is_valid():
         try:save_resource(request.user,pk,form.cleaned_data)
         except ValidationError as exc:form.add_error(None,' '.join(exc.messages))

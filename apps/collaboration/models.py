@@ -68,3 +68,10 @@ class AnnouncementRevision(models.Model):
     created_at=models.DateTimeField(auto_now_add=True)
     class Meta:
         ordering=['-pk']
+
+class ChatReadState(models.Model):
+    community=models.ForeignKey('communities.Community',on_delete=models.PROTECT,related_name='chat_read_states')
+    user=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)
+    last_message_id=models.PositiveBigIntegerField(default=0)
+    class Meta:
+        constraints=[models.UniqueConstraint(fields=['community','user'],name='unique_chat_read_state')]

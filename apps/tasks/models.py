@@ -26,9 +26,18 @@ class Task(models.Model):
     revision=models.PositiveIntegerField(default=1)
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
+    @property
+    def is_overdue(self):
+        from django.utils import timezone
+        return bool(self.due_date and self.due_date<timezone.localdate() and self.status!='approved')
     class Meta: ordering=['-created_at','pk']
 
 class TaskFile(Immutable):
+    replaces=models.OneToOneField('self',on_delete=models.PROTECT,null=True,blank=True,related_name='next_version')
+    version=models.PositiveIntegerField(default=1)
+    revision_note=models.CharField(max_length=1000,blank=True)
+    uploader_name=models.CharField(max_length=120,blank=True)
+
     id=models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     task=models.ForeignKey(Task,on_delete=models.PROTECT,related_name='files')
     uploader=models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.PROTECT)

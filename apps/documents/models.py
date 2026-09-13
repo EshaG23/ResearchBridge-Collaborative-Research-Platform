@@ -15,6 +15,7 @@ class ProjectDocument(models.Model):
         ordering = ['-created_at']
 
 class DocumentVersion(models.Model):
+    uploader_name = models.CharField(max_length=120,blank=True)
     id = models.UUIDField(primary_key=True,default=uuid.uuid4,editable=False)
     document = models.ForeignKey(ProjectDocument,on_delete=models.PROTECT,related_name='versions')
     version = models.PositiveIntegerField()
@@ -30,5 +31,6 @@ class DocumentVersion(models.Model):
     def save(self,*args,**kwargs):
         if not self._state.adding:
             raise ValidationError('Document versions are immutable. Upload a new version.')
+        if not self.uploader_name:self.uploader_name=self.uploader.profile.name
         return super().save(*args,**kwargs)
 

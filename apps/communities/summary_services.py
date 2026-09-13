@@ -92,7 +92,9 @@ def save_resource(user,pk,data):
         with transaction.atomic():
             community=lock(user,pk);old=replay(community,user,data,'resource_added')
             if old:return old.details['record_id']
-            record=SummaryResource(community=community,title=data['title'],category=data['category'],url=data.get('url',''),added_by=user)
+            previous=data.get('replaces')
+            if previous and (previous.community_id!=community.pk or SummaryResource.objects.filter(replaces=previous).exists()):raise ValidationError('Choose the latest version of a resource in this community.')
+            record=SummaryResource(replaces=previous,version=previous.version+1 if previous else 1,revision_note=data.get('revision_note',''),uploader_name=user.profile.name,community=community,title=data['title'],category=data['category'],url=data.get('url',''),added_by=user)
             upload=data.get('file')
             if upload:
                 record.mime_type=validate_resource(upload);raw=upload.read();record.size=len(raw);record.sha256=hashlib.sha256(raw).hexdigest()

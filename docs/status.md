@@ -143,3 +143,6 @@ Module 16 completed: private persistent team chat, replies, media library, prote
 
 
 Module 17 completed: task assignment, progress and blockers, private evidence files, numbered submissions, mentor/leader review, changes requested, reopening, task/file discussion and approved task totals. All 145 regression tests passed. See docs/module-17.md.
+
+
+Module 18 completed: private filtered history, explicit document version chains, preserved comments/reviews and contribution views. Also added the requested Module 17 checklist/Completed view and persistent dashboard chat unread counts. All 149 regression tests passed. See docs/module-18.md.
