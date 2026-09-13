@@ -11,6 +11,7 @@ from django.db.models import Count,Q
 from django.http import JsonResponse,Http404,FileResponse,StreamingHttpResponse,HttpResponse
 from django.shortcuts import get_object_or_404,render,redirect
 from django.template.loader import render_to_string
+from django.middleware.csrf import get_token
 from django.views.decorators.cache import never_cache
 from django.views.decorators.http import require_GET,require_POST,require_http_methods
 from apps.communities.views import accessible
@@ -62,7 +63,7 @@ def feed(request,pk):
     else:items=list(query(c).filter(pk__gt=after).order_by('pk')[:40])
     ids=[number(v) for v in request.GET.get('polls','').split(',')[:100]]
     polls={str(p.pk):render_to_string('collaboration/poll.html',poll_context(p,request.user),request=request) for p in Poll.objects.filter(pk__in=ids,message__community=c).select_related('message__community__project')}
-    return JsonResponse({'messages':[{'id':m.pk,'html':message_html(m,request)} for m in items],
+    return JsonResponse({'user_id':str(request.user.pk),'csrf_token':get_token(request),'messages':[{'id':m.pk,'html':message_html(m,request)} for m in items],
         'older':bool(items and c.chat_messages.filter(pk__lt=items[0].pk).exists()),'polls':polls})
 
 @login_required
@@ -70,6 +71,8 @@ def feed(request,pk):
 @require_POST
 def post(request,pk):
     accessible(request,pk)
+    if request.headers.get('X-Chat-User') not in (None,str(request.user.pk)):
+        return JsonResponse({'error':'The signed-in account changed in another tab. Reload this chat before continuing.','code':'account_changed'},status=409)
     try:
         key=uuid.UUID(request.POST.get('key',''))
         m=send(request.user,pk,key,request.POST.get('text',''),request.FILES.getlist('files'),number(request.POST.get('reply')) or None,
@@ -83,6 +86,8 @@ def post(request,pk):
 @require_POST
 def poll_action(request,pk,poll_id):
     accessible(request,pk)
+    if request.headers.get('X-Chat-User') not in (None,str(request.user.pk)):
+        return JsonResponse({'error':'The signed-in account changed in another tab. Reload this chat before continuing.','code':'account_changed'},status=409)
     try:
         poll=close_poll(request.user,pk,poll_id) if request.POST.get('action')=='close' else vote(request.user,pk,poll_id,number(request.POST.get('option')))
         return JsonResponse({'poll':render_to_string('collaboration/poll.html',poll_context(poll,request.user),request=request)})

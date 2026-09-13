@@ -4,17 +4,35 @@
  const text=document.getElementById('chat-text'),files=document.getElementById('chat-files'),key=document.getElementById('send-key'),error=document.getElementById('chat-error'),connection=document.getElementById('chat-connection');
  const older=document.getElementById('load-older'),newButton=document.getElementById('new-messages'),sendButton=document.getElementById('chat-send');
  let cursor=Number(app.dataset.latest),oldest=Number(app.dataset.oldest),stopped=false,sending=false,fetching=false,timer,recording=null,voice=null,stream=null,recordTimer,pending=null;
- const csrf=form.querySelector('[name=csrfmiddlewaretoken]').value;
+ let csrf=form.querySelector('[name=csrfmiddlewaretoken]').value;
  const uuid=()=>crypto.randomUUID();key.value=uuid();
  const showError=msg=>{error.textContent=msg;error.hidden=false;};
  const nearBottom=()=>scroll.scrollHeight-scroll.scrollTop-scroll.clientHeight<100;
  const bottom=()=>{scroll.scrollTop=scroll.scrollHeight;newButton.hidden=true;};
- function revoke(){stopped=true;clearTimeout(timer);clearTimeout(recordTimer);if(recording&&recording.state!=='inactive')recording.stop();if(stream)stream.getTracks().forEach(t=>t.stop());timeline.replaceChildren();form.hidden=true;connection.textContent='Access unavailable';showError('Your session or community access changed. Reload or sign in again.');}
+ function revoke(message='Your session or community access changed. Reload or sign in again.'){stopped=true;clearTimeout(timer);clearTimeout(recordTimer);if(recording&&recording.state!=='inactive')recording.stop();if(stream)stream.getTracks().forEach(t=>t.stop());timeline.replaceChildren();form.hidden=true;connection.textContent='Access unavailable';showError(message);newButton.hidden=true;older.hidden=true;}
  async function responseJSON(response){
-   if(response.redirected||[401,403,404].includes(response.status)){revoke();throw new Error('Please reload and sign in with an authorised account.');}
+   if(response.redirected||[401,404].includes(response.status)){revoke();throw new Error('Please reload and sign in with an authorised account.');}
    const type=response.headers.get('content-type')||'';
    if(!type.includes('application/json'))throw new Error('The server could not handle this request. Your draft is kept; please retry.');
-   const data=await response.json();if(!response.ok){const failure=new Error(data.error||'Request failed. Please retry.');failure.definite=response.status===400;throw failure;}return data;
+   const data=await response.json();if(data.code==='account_changed'||(data.user_id&&data.user_id!==app.dataset.user)){const message='The signed-in account changed in another tab. Reload this chat to use the current account. For mentor and student testing together, use separate browser profiles or different browsers.';revoke(message);throw new Error(message);}if(data.csrf_token)csrf=data.csrf_token;if(!response.ok){const failure=new Error(data.error||'Request failed. Please retry.');failure.definite=response.status===400;throw failure;}return data;
+ }
+ // Recover a rotated CSRF token once; keep the page's original account identity.
+ async function timedFetch(url,options={}){
+   const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),20000);
+   try{return await fetch(url,{...options,signal:controller.signal});}
+   catch(e){if(e.name==='AbortError')throw new Error('The connection timed out. Please retry.');throw e;}
+   finally{clearTimeout(timeout);}
+ }
+ async function postJSON(url,data){
+   const submit=()=>{data.set('csrfmiddlewaretoken',csrf);return timedFetch(url,{method:'POST',body:data,headers:{'X-CSRFToken':csrf,'X-Chat-User':app.dataset.user}});};
+   let response=await submit();
+   if(response.status===403){
+     await responseJSON(await timedFetch(app.dataset.feed+'?after='+cursor,{cache:'no-store'}));
+     if(stopped)throw new Error('Reload the chat before continuing.');
+     response=await submit();
+     if(response.status===403)throw new Error('Security check could not refresh. Reload this page and try again.');
+   }
+   return responseJSON(response);
  }
  function insert(item){
    if(timeline.querySelector(`[data-message="${item.id}"]`))return;
@@ -26,7 +44,7 @@
    if(stopped||fetching)return;fetching=true;
    try{
      const ids=Array.from(timeline.querySelectorAll('[data-poll]')).slice(-100).map(e=>e.dataset.poll).join(',');
-     const data=await responseJSON(await fetch(app.dataset.feed+'?after='+cursor+'&polls='+ids,{cache:'no-store'}));const follow=nearBottom();
+     const data=await responseJSON(await timedFetch(app.dataset.feed+'?after='+cursor+'&polls='+ids,{cache:'no-store'}));const follow=nearBottom();
      data.messages.forEach(m=>{insert(m);cursor=Math.max(cursor,m.id);});
      Object.entries(data.polls).forEach(([id,html])=>{const node=timeline.querySelector(`[data-poll="${id}"]`);if(node&&!node.contains(document.activeElement))node.outerHTML=html;});
      if(data.messages.length){if(follow)bottom();else newButton.hidden=false;}
@@ -36,7 +54,7 @@
    finally{fetching=false;}
  }
  older.addEventListener('click',async()=>{older.disabled=true;const height=scroll.scrollHeight;
-   try{const data=await responseJSON(await fetch(app.dataset.feed+'?before='+oldest,{cache:'no-store'}));data.messages.forEach(insert);older.hidden=!data.older;scroll.scrollTop+=scroll.scrollHeight-height;}
+   try{const data=await responseJSON(await timedFetch(app.dataset.feed+'?before='+oldest,{cache:'no-store'}));data.messages.forEach(insert);older.hidden=!data.older;scroll.scrollTop+=scroll.scrollHeight-height;}
    catch(e){showError(e.message);}finally{older.disabled=false;}
  });
  newButton.addEventListener('click',bottom);
@@ -52,14 +70,14 @@
    const data=pending||new FormData(form);if(!pending){data.delete('files');uploads.forEach(f=>data.append('files',f));}pending=data;
    // Freeze the composer while its immutable send key is in flight.
    Array.from(form.elements).forEach(el=>el.disabled=true);
-   try{const result=await responseJSON(await fetch(form.action,{method:'POST',body:data,headers:{'X-CSRFToken':csrf}}));insert(result);pending=null;form.reset();key.value=uuid();voice=null;selected();document.getElementById('record-status').textContent='';document.getElementById('reply-preview').hidden=true;document.getElementById('poll-compose').hidden=true;bottom();}
+   try{const result=await postJSON(form.action,data);insert(result);pending=null;form.reset();key.value=uuid();voice=null;selected();document.getElementById('record-status').textContent='';document.getElementById('reply-preview').hidden=true;document.getElementById('poll-compose').hidden=true;bottom();}
    catch(e){if(e.definite)pending=null;showError(e.message+(pending?' Retry sends the same saved draft safely.':' Correct the draft and send again.'));}
    finally{sending=false;Array.from(form.elements).forEach(el=>el.disabled=!!pending);sendButton.disabled=false;sendButton.textContent=pending?'Retry message':'Send message';if(stopped)form.hidden=true;}
  });
  text.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();form.requestSubmit();}});
  timeline.addEventListener('submit',async e=>{const vote=e.target.closest('.poll-form');if(!vote)return;e.preventDefault();const button=e.submitter;if(!button)return;
    const data=new FormData(vote);data.set(button.name,button.value);vote.querySelectorAll('button').forEach(b=>b.disabled=true);
-   try{const result=await responseJSON(await fetch(vote.action,{method:'POST',body:data,headers:{'X-CSRFToken':csrf}}));vote.closest('[data-poll]').outerHTML=result.poll;}
+   try{const result=await postJSON(vote.action,data);vote.closest('[data-poll]').outerHTML=result.poll;}
    catch(e){showError(e.message);vote.querySelectorAll('button').forEach(b=>b.disabled=false);}
  });
  const recordButton=document.getElementById('record-audio'),recordStatus=document.getElementById('record-status');

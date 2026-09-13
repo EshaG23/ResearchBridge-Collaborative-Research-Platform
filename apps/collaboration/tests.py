@@ -127,3 +127,34 @@ class ChatTests(TestCase):
         self.client.force_login(self.student)
         for name,args in [('feed',[c.pk]),('chat',[c.pk]),('media',[c.pk]),('attachment',[c.pk,m.attachments.first().pk]),('announcements',[c.pk])]:
             self.assertEqual(self.client.get(reverse('collaboration:'+name,args=args)).status_code,404)
+
+    def test_leader_replies_and_votes_after_csrf_rotation(self):
+        from django.conf import settings
+        c=self.open();appoint_leader(self.teacher,c.pk,self.student.pk,c.revision,uuid.uuid4())
+        m=send(self.teacher,c.pk,uuid.uuid4(),'Mentor message',question='Meeting?',options=['Yes','No'])
+        client=Client(enforce_csrf_checks=True);client.force_login(self.student)
+        feed=reverse('collaboration:feed',args=[c.pk]);send_url=reverse('collaboration:send',args=[c.pk])
+        old=client.get(feed).json()['csrf_token']
+        # Logging in again rotates the CSRF secret while an older tab remains open.
+        del client.cookies[settings.CSRF_COOKIE_NAME]
+        fresh=client.get(feed).json()
+        self.assertEqual(fresh['user_id'],str(self.student.pk))
+        data={'key':uuid.uuid4(),'text':'Leader reply','reply':m.pk}
+        self.assertEqual(client.post(send_url,data,HTTP_X_CSRFTOKEN=old).status_code,403)
+        headers={'HTTP_X_CSRFTOKEN':fresh['csrf_token'],'HTTP_X_CHAT_USER':str(self.student.pk)}
+        self.assertEqual(client.post(send_url,data,**headers).status_code,200)
+        self.assertEqual(client.post(send_url,data,**headers).status_code,200)
+        self.assertEqual(ChatMessage.objects.filter(reply_to=m,sender=self.student).count(),1)
+        vote_url=reverse('collaboration:poll',args=[c.pk,m.poll.pk])
+        self.assertEqual(client.post(vote_url,{'option':m.poll.options.first().pk},**headers).status_code,200)
+        self.assertTrue(PollVote.objects.filter(poll=m.poll,voter=self.student).exists())
+
+    def test_stale_tab_cannot_send_or_vote_as_different_account(self):
+        c=self.open();m=send(self.teacher,c.pk,uuid.uuid4(),question='Ready?',options=['Yes','No'])
+        self.client.force_login(self.teacher)
+        headers={'HTTP_X_CHAT_USER':str(self.student.pk)}
+        response=self.client.post(reverse('collaboration:send',args=[c.pk]),{'key':uuid.uuid4(),'text':'Wrong account'},**headers)
+        self.assertEqual(response.status_code,409);self.assertEqual(response.json()['code'],'account_changed')
+        response=self.client.post(reverse('collaboration:poll',args=[c.pk,m.poll.pk]),{'option':m.poll.options.first().pk},**headers)
+        self.assertEqual(response.status_code,409);self.assertFalse(PollVote.objects.exists())
+        self.assertEqual(ChatMessage.objects.count(),1)
