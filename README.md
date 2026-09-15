@@ -99,3 +99,10 @@ Module 18 completed: private filtered history, explicit document version chains,
 Module 19 adds completion, private IP progress and mentor-approved shared achievements. Module 20 adds connected verification, backup/restore tools and local launch scripts. Public hosting and real SMTP delivery still require external configuration; see docs/module-20.md.
 
 In CMD, run `start-demo.cmd` from this folder, then open http://127.0.0.1:8000/accounts/login/. See demo_rosters/README.md for the 5 student and 5 teacher accounts. All initial passwords are `ResearchDemo!2026`; profiles must be completed after login.
+
+
+## Presentation reference and repeatable reset
+
+Open docs/PRESENTATION-GUIDE.html in your browser for the full offline guide, or read docs/PRESENTATION-GUIDE.md. It covers modules, storage, model fields, routes, file responsibilities, demo flow and viva answers.
+
+To start fresh: stop all demo servers, run `reset-demo.cmd`, wait for success, then run `start-demo.cmd`. The reset archives the old private/demo folder and recreates the ten roster accounts with incomplete profiles. It does not reset real-mode data.

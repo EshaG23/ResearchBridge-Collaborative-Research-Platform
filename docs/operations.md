@@ -30,3 +30,8 @@ The pre-reset demo backup is private/release-backups/before-reset-20260913-final
 Use config.settings.production, a strong DJANGO_SECRET_KEY, exact DJANGO_ALLOWED_HOSTS, RESEARCHBRIDGE_AUTH_MODE=real and a persistent RESEARCHBRIDGE_DATA_DIR. Configure SMTP through environment variables listed in .env.example. Never publish private uploads or log real OTPs. Configure HTTPS, serve collected static assets, use a production WSGI/ASGI server, and run check --deploy against the actual environment. /health/ performs a database connectivity check without exposing configuration.
 
 Real SMTP credentials and a hosting destination have not been supplied. Actual delivery, HTTPS hosting and recovery on that host remain to be verified before public launch. Demo OTP 123456 is only for local demo mode.
+
+
+## Repeatable local reset
+
+Stop all server processes first. From the project folder run `reset-demo.cmd`. It refuses a listener on port 8000, validates paths, archives private/demo as private/demo-backup-TIMESTAMP, migrates a fresh database, seeds taxonomy and imports 5 students plus 5 teachers. Servers on custom ports must also be stopped manually. Then run `start-demo.cmd`. This archive operation does not produce a checksum manifest; use backup_workspace for a separately verified backup. An isolated repeated-reset test confirmed account counts, incomplete profiles, zero projects and retention of prior files.
