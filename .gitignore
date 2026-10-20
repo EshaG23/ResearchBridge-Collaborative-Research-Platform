@@ -1,13 +1,57 @@
+# Local Python environments and generated caches
 .venv/
+venv/
+env/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 __pycache__/
 *.py[cod]
+# Environment files and private credentials (keep the documented template)
 .env
 .env.*
 !.env.example
+.development-secret
+*.pem
+*.key
+*.p12
+*.pfx
+# Runtime records, user uploads and backups must never be published
 private/
+uploads/
+media/
 *.sqlite3
 *.sqlite3-*
+*.sqlite
+*.sqlite-*
+*.db
+*.db-*
 staticfiles/
 backups/
+*.bak
+*.sql
+# Archives can accidentally bundle the database and private uploads
+*.zip
+*.7z
+*.tar
+*.tar.gz
+*.tgz
+# Local logs, test output and editor/OS metadata
+*.log
 .coverage
+.coverage.*
 htmlcov/
+coverage.xml
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.swo
+# Local working/output directories; source documentation stays tracked
+/tmp/
+/output/
+/work/
+secrets.json
+credentials.json

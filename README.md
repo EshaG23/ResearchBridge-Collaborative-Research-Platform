@@ -1,108 +1,64 @@
 # ResearchBridge
 
-College research collaboration for registered `rbunagpur.in` and `rknec.in` users. This is a student project, not a claim of official university endorsement.
+A university research collaboration portal for roster-approved students and teachers using `rbunagpur.in` or `rknec.in` email addresses. This is a student project, not a claim of official university endorsement.
 
-Modules 1–4 provide the foundation, shared UI, roster-based password authentication, and persisted role-specific profiles. The ten-part product specification remains the source of truth; coding modules do not replace its numbering. Real SMTP delivery still needs private setup and testing. Modules 5–7 add shared access policies, private PDF documents and versions, persistent in-app notifications, and student/faculty idea creation. See [modules 5–7 guide](docs/modules-5-7.md). Module 8 adds mentor matching, sequential requests and faculty decisions; see [the mentor guide](docs/module-8.md). Module 9 adds [project discovery and filters](docs/module-9.md) on Dashboard and Discover projects. Module 10 adds [applications with private résumé snapshots](docs/module-10.md). Module 11 adds [applicant review, shortlisting and optional meetings](docs/module-11.md). Offer letters and community workflows remain for later modules.
+## Features
 
-## Demo accounts
+The implementation covers twenty development modules: university roster login and password reset; role-specific profiles and resumes; protected documents; persistent notifications; idea creation; mentor matching; project discovery; applications and review; offer letters; agreement signing and verification; private communities; research summaries and document versions; chat, attachments and polls; announcements; tasks and reviewed evidence; activity history and contributions; completion and intellectual-property progress; backup and restore utilities.
 
-See [demo roster instructions and credentials](demo_rosters/README.md). After initial migrations/taxonomy setup, import both roster files using those commands. The current local demo is already imported.
+The frontend uses Django HTML templates, CSS and vanilla JavaScript. The backend uses Python and Django; SQLite stores records, and private folders store uploaded/generated files. See `requirements.txt` for dependency versions.
 
-## Run locally
+## Fresh checkout: Windows CMD
 
-Python 3.13 is installed on the current machine. From this project directory, the existing environment can be used without activation:
+Python 3.13 was used for development. Install Python with the Windows `py` launcher, then open CMD inside the cloned `researchbridge` project folder (the folder containing `manage.py`). Run each command separately and continue only if it succeeds:
 
-```powershell
-
-..\..\work\.venv\Scripts\python.exe manage.py migrate
-..\..\work\.venv\Scripts\python.exe manage.py seed_demo_taxonomy
-
-..\..\work\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
-
+```cmd
+setup-demo.cmd
+reset-demo.cmd
+start-demo.cmd
 ```
 
-Open http://127.0.0.1:8000/. The root opens sign-in. Use student1@rbunagpur.in with initial password ResearchDemo!2026, then complete the mandatory profile. OTP 123456 is now only for local Forgot Password. Review the local interface at http://127.0.0.1:8000/dev/ui/ and shared components at http://127.0.0.1:8000/dev/ui/components/. These previews are disabled in production and contain no real research data.
+`setup-demo.cmd` creates a local `.venv`, installs dependencies and applies migrations. `reset-demo.cmd` creates taxonomy and the ten fictional roster accounts. On an existing installation it first archives the current demo data, so use it only when you want a fresh demo. Stop running project servers before resetting. `start-demo.cmd` applies migrations and starts the local server.
 
-For a fresh checkout:
+Open http://127.0.0.1:8000/accounts/demo-session/ . Keep the terminal open while using the app; Ctrl+C stops the server. For subsequent runs that preserve existing data, use only `start-demo.cmd`.
 
-```powershell
+Use **Open another account** for independent side-by-side demo sessions. See [demo accounts](demo_rosters/README.md) for all five students and five teachers. Initial demo password: `ResearchDemo!2026`. Local forgot-password OTP: `123456`. These are intentionally public fictional demo credentials; do not use them for real accounts.
 
-python -m venv .venv
+## Development checks
 
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+From a checkout set up with `setup-demo.cmd`:
 
-.\.venv\Scripts\python.exe manage.py migrate
-.\.venv\Scripts\python.exe manage.py seed_demo_taxonomy
-
-.\.venv\Scripts\python.exe manage.py runserver 127.0.0.1:8000
-
+```cmd
+.venv\Scripts\python.exe manage.py check
+.venv\Scripts\python.exe manage.py makemigrations --check --dry-run
+.venv\Scripts\python.exe manage.py test
 ```
 
-Use the same Python executable for checks:
+Use the same Python environment for all management commands. Tests use isolated test databases. The module documents record historical verification, not a guarantee about future modifications.
 
-```powershell
+## Data and credentials
 
-..\..\work\.venv\Scripts\python.exe manage.py check
+- Demo records: `private/demo/db.sqlite3`.
+- Demo uploaded/generated files: `private/demo/uploads/`.
+- Local development secret: `private/demo/.development-secret`.
+- Reset archives: `private/demo-backup-TIMESTAMP/`.
+- `demo_rosters/` contains fictional initial account data, not the live database. Keep real university rosters outside the repository.
 
-..\..\work\.venv\Scripts\python.exe manage.py test
+The entire `private/` directory is ignored by Git. Do not manually upload it to GitHub or include it in a release ZIP. A source checkout intentionally excludes live profiles, signatures, chat uploads and database contents. Back up the database and uploads together using the documented operations tools.
 
-..\..\work\.venv\Scripts\python.exe manage.py makemigrations --check --dry-run
-
-```
-
-Optional local administration: run `manage.py createsuperuser` using that Python executable. Enter an eligible college email and a private administrator password interactively. This is a maintenance account, not proof of inbox ownership or teacher status. No credentials are seeded. Student/teacher roles come from imported rosters. Login uses passwords; OTP is only for password reset.
+`.env.example` contains placeholders only. Django does not automatically load `.env` files: set configuration through the process/host environment. Production requires a private secret, explicit hosts, persistent storage and real authentication/email configuration. The local development server and fixed demo OTP are not production hosting. Real SMTP delivery still requires setup and testing.
 
 ## Documentation
 
-- [Complete original requirements](docs/requirements-original.md)
-
-- [Architecture and module mapping](docs/architecture.md)
-
+- [Complete project explanation and file reference](docs/PRESENTATION-GUIDE.md)
+- [Offline HTML presentation guide](docs/PRESENTATION-GUIDE.html)
+- [Original requirements](docs/requirements-original.md)
+- [Architecture](docs/architecture.md)
 - [Permissions and workflow states](docs/permissions-and-states.md)
-
-- [Assumptions and unresolved decisions](docs/decisions.md)
-
 - [Authentication and profiles](docs/authentication-and-profiles.md)
-- [Shared interface](docs/interface.md)
+- [Interface](docs/interface.md)
+- [Implementation status](docs/status.md)
+- [Operations, deployment and backups](docs/operations.md)
+- [GitHub publishing checks](docs/github-publishing.md)
 
-- [Implementation and test status](docs/status.md)
-
-- [Deployment and backup guidance](docs/operations.md)
-
-Do not delete `private/` to reset or restart the app. It contains persistent local data and the development signing secret. Do not commit it or upload it with source code.
-
-
-
-Module 12 completed: private, immutable offer letters with mentor preview, PDF downloads and in-app notification. See docs/module-12.md. Agreement signing follows in Module 13.
-
-
-Module 13 completed: drawn/typed/physical agreement signing, immutable evidence PDFs, mentor verification, correction history and intended-team readiness checklist. See docs/module-13.md.
-
-
-Module 14 completed: mentor-created private community, all-student agreement gate, explicit admission, leader appointment, protected five-section landing page and history. See docs/module-14.md.
-
-
-Module 15 completed: editable research summary, custom sections, private PDF/PPTX/reference library, sprint planning/status board and recorded edit history. See docs/module-15.md.
-
-
-Module 16 completed: private persistent team chat, replies, media library, protected audio/video/photo/document attachments, voice-note recording, polls and mentor/leader announcements. All 134 tests passed. See docs/module-16.md.
-
-
-Module 17 completed: task assignment, progress and blockers, private evidence files, numbered submissions, mentor/leader review, changes requested, reopening, task/file discussion and approved task totals. All 145 regression tests passed. See docs/module-17.md.
-
-
-Module 18 completed: private filtered history, explicit document version chains, preserved comments/reviews and contribution views. Also added the requested Module 17 checklist/Completed view and persistent dashboard chat unread counts. All 149 regression tests passed. See docs/module-18.md.
-
-
-## Latest release
-
-Module 19 adds completion, private IP progress and mentor-approved shared achievements. Module 20 adds connected verification, backup/restore tools and local launch scripts. Public hosting and real SMTP delivery still require external configuration; see docs/module-20.md.
-
-In CMD, run `start-demo.cmd` from this folder, then open http://127.0.0.1:8000/accounts/login/. See demo_rosters/README.md for the 5 student and 5 teacher accounts. All initial passwords are `ResearchDemo!2026`; profiles must be completed after login.
-
-
-## Presentation reference and repeatable reset
-
-Open docs/PRESENTATION-GUIDE.html in your browser for the full offline guide, or read docs/PRESENTATION-GUIDE.md. It covers modules, storage, model fields, routes, file responsibilities, demo flow and viva answers.
-
-To start fresh: stop all demo servers, run `reset-demo.cmd`, wait for success, then run `start-demo.cmd`. The reset archives the old private/demo folder and recreates the ten roster accounts with incomplete profiles. It does not reset real-mode data.
+Module-specific guides under `docs/` explain implementation details. Original requirements and older module notes are historical; the complete guide describes later decisions such as roster-based login without public signup.
