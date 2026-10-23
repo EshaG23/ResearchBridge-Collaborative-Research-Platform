@@ -54,6 +54,8 @@ def password_login(request, email, password):
 
 @sensitive_variables()
 def request_code(email, binding, ip):
+    if not settings.PASSWORD_RESET_ENABLED:
+        raise AuthenticationError('Password reset by email is unavailable. Contact the project administrator.')
     email=normalise_college_email(email)
     rate_limit('reset',email,ip)
     user=registered_user(email)

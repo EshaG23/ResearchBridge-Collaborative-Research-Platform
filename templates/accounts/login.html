@@ -27,7 +27,7 @@
         {% include 'components/field.html' with field=form.email %}{% include 'components/field.html' with field=form.password %}<p class="field-error" data-email-feedback aria-live="polite"></p>
         <button class="button button-primary full-width" type="submit" data-email-submit>Login {% include 'components/icon.html' with name='arrow' %}</button>
       </form>
-      <p class="field-help"><a href="{% url 'accounts:forgot' %}">Forgot password?</a></p>
+      {% if password_reset_enabled %}<p class="field-help"><a href="{% url 'accounts:forgot' %}">Forgot password?</a></p>{% else %}<p class="field-help">Forgot your password? Contact the project administrator. Email reset is unavailable.</p>{% endif %}
       <div class="auth-access-note"><p class="field-help">Accounts are provided through the university roster. There is no self-registration.</p></div>
       {% if demo %}<div class="demo-access"><span class="demo-tag">LOCAL DEMO</span><div><strong>Use a registered demo account.</strong><p><b>student1@rbunagpur.in</b><br>Initial password: <b>ResearchDemo!2026</b><br>Fictional roster data. Reset OTPs are simulated locally.<br><a href="{% url 'accounts:demo-session' %}" target="_blank" rel="noopener">Open another account in a new tab ↗</a><br>Each new account tab keeps its own login.</p></div></div>{% endif %}
       <div class="auth-reassurance">{% include 'components/icon.html' with name='shield' %}<p>Private research details are shared only with authorised project members.</p></div>

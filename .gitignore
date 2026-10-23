@@ -12,6 +12,8 @@ __pycache__/
 .env.*
 !.env.example
 .development-secret
+.researchbridge.json
+*-private-roster.json
 *.pem
 *.key
 *.p12

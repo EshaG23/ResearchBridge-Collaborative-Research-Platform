@@ -1,4 +1,6 @@
 import secrets
+from functools import wraps
+from django.conf import settings
 from uuid import UUID
 from django.contrib import messages
 from django.contrib.auth import login, logout
@@ -16,6 +18,16 @@ from .forms import LoginForm, EmailForm, CodeForm
 from .models import OTPChallenge, User
 from .services import password_login, request_code, verify_code, registered_user, AuthenticationError, digest, demo_mode
 
+def reset_available(view):
+    @wraps(view)
+    def guarded(request, *args, **kwargs):
+        if not settings.PASSWORD_RESET_ENABLED:
+            for key in ('reset_grant', 'reset_email', 'otp_binding', 'otp_challenge'):
+                request.session.pop(key, None)
+            return render(request, 'accounts/reset_unavailable.html', status=403)
+        return view(request, *args, **kwargs)
+    return guarded
+
 @never_cache
 @sensitive_post_parameters('password')
 @require_http_methods(['GET','POST'])
@@ -32,10 +44,12 @@ def sign_in(request):
             login(request,user)
             request.session.pop('reset_grant',None)
             return redirect('dashboard')
-    return render(request,'accounts/login.html',{'form':form,'demo':demo_mode()})
+    return render(request,'accounts/login.html',{'form':form,'demo':demo_mode(),
+        'password_reset_enabled': settings.PASSWORD_RESET_ENABLED})
 
 @never_cache
 @require_http_methods(['GET','POST'])
+@reset_available
 def forgot(request):
     form=EmailForm(request.POST or None)
     if request.method=='POST' and form.is_valid():
@@ -62,6 +76,7 @@ def current_challenge(request):
 @never_cache
 @sensitive_post_parameters('code')
 @require_http_methods(['GET','POST'])
+@reset_available
 def verify(request):
     if not request.session.get('reset_email'):
         return redirect('accounts:forgot')
@@ -84,6 +99,7 @@ def verify(request):
 
 @require_POST
 @never_cache
+@reset_available
 def resend(request):
     email=request.session.get('reset_email')
     if not email:
@@ -109,6 +125,7 @@ def reset_user(request):
 @never_cache
 @sensitive_post_parameters('new_password1','new_password2')
 @require_http_methods(['GET','POST'])
+@reset_available
 def reset_password(request):
     user=reset_user(request)
     if not user:

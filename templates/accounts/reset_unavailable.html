@@ -1,0 +1,7 @@
+{% extends 'accounts/login.html' %}
+{% block title %}Password help · ResearchBridge{% endblock %}
+{% block authentication %}
+<h2 id="signin-title">Password help</h2>
+<p class="intro-copy">Password reset by email is currently unavailable. Contact the project administrator to reset your password.</p>
+<a class="button button-primary" href="{% url 'accounts:login' %}">Back to login</a>
+{% endblock %}

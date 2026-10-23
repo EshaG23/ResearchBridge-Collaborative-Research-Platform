@@ -50,6 +50,8 @@ The entire `private/` directory is ignored by Git. Do not manually upload it to 
 
 ## Documentation
 
+- [PythonAnywhere deployment without email](docs/pythonanywhere.md)
+
 - [Complete project explanation and file reference](docs/PRESENTATION-GUIDE.md)
 - [Offline HTML presentation guide](docs/PRESENTATION-GUIDE.html)
 - [Original requirements](docs/requirements-original.md)

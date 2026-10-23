@@ -68,6 +68,7 @@ X_FRAME_OPTIONS = "DENY"
 SECURE_CONTENT_TYPE_NOSNIFF = True
 # Never log password-reset OTPs with a console email backend.
 EMAIL_BACKEND = "django.core.mail.backends.dummy.EmailBackend"
+PASSWORD_RESET_ENABLED = True  # Local demo retains its existing reset workflow.
 AUTHENTICATION_MODE = os.environ.get('RESEARCHBRIDGE_AUTH_MODE', 'disabled')
 EMAIL_HOST = os.environ.get('SMTP_HOST', 'smtp.gmail.com')
 EMAIL_PORT = int(os.environ.get('SMTP_PORT', '587'))
